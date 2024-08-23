@@ -32,7 +32,7 @@ export default function LatexEdge({ id, sourceX, sourceY, targetX, targetY, styl
             <EdgeLabelRenderer>
                 <div style={{
                     position: 'absolute',
-                    transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                    transform: `translate(-50%, -150%) translate(${labelX}px,${labelY}px)`,
                     pointerEvents: 'all',
                     fontSize: '12px',
                 }}>
