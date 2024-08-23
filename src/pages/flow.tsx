@@ -58,6 +58,8 @@ const edges = [
         source: '3',
         target: '3',
         type: 'loop',
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#FF0072', width: 15, height: 15 },
+        animated: true,
     },
     
 ];

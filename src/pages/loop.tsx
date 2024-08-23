@@ -28,52 +28,49 @@ export default function LoopEdge({
         curvature: 3
     });
 
-    console.log(edgePath)
-
-    // const path = generateSemiCirclePath(sourceX, sourceY, targetX, targetY, 10);
-    const path = generateParabolaCurve(sourceX, sourceY, targetX, targetY, 40);
+    const path = generateParabolaCurve(sourceX ,sourceY , targetX, targetY, 40);
+    const labelX = (sourceX + targetX) / 2;
+    const labelY = (sourceY + targetY) / 2 - 60;
 
     return (
         <>
             <BaseEdge id={id} path={path} style={style} markerEnd={markerEnd}/>
+            <EdgeLabelRenderer>
+                <div style={{
+                    position: 'absolute',
+                    transform: `translate(-50%, -150%) translate(${labelX}px,${labelY}px)`,
+                    pointerEvents: 'all',
+                    fontSize: '12px',
+                }}>
+                    <Latex>$\alpha$</Latex>
+                </div>
+            </EdgeLabelRenderer>
         </>
     );
 }
 
 
-function generateSemiCirclePath(x1, y1, x2, y2, radius) {
-    // Calculate the distance between the two points
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+function generateParabolaCurve(x1, y1, x2, y2) {
+    // Move curve so not behind node
+    y1 -= 20;
+    y2 -= 20;
 
-    // If the radius is smaller than half the distance, adjust the radius to fit the semi-circle
-    if (radius < distance / 2) {
-        radius = distance / 2;
-    }
+    const innerShift = 10;
+    x1 = x1 - innerShift;
+    x2 = x2 + innerShift;
 
-    // Calculate the large-arc-flag (always 0 for semi-circle) and sweep-flag (1 for clockwise)
-    const largeArcFlag = 0;
-    const sweepFlag = 0;
-
-    // Generate the path string
-    const path = `M${x1},${y1} A${radius},${radius} 0 ${largeArcFlag},${sweepFlag} ${x2},${y2}`;
-
-    return path;
-}
-
-function generateParabolaCurve(x1, y1, x2, y2, controlPointDistance) {
     // Calculate the midpoint between the start and end points
+    const verticalStretch = 75;
     const midX = (x1 + x2) / 2;
-    const midY = (y1 + y2) / 2;
+    const midY = (y1 + y2) / 2 - verticalStretch;
 
     // Calculate the control point position
     // The control point is offset vertically by controlPointDistance from the midpoint
     const cpX = midX;
-    const cpY = midY - controlPointDistance;
+    const cpY = midY;
 
     // Generate the path string
-    const path = `M${x1 + 100},${y1 + 100} Q${cpX},${cpY} ${x2 + 100},${y2 + 100}`;
+    const path = `M${x1},${y1} Q${cpX},${cpY} ${x2},${y2}`;
 
     return path;
 }
