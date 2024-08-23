@@ -2,7 +2,20 @@ import { BaseEdge, EdgeLabelRenderer, getBezierPath, MarkerType } from '@xyflow/
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
 
-export default function latexEdge({ id, sourceX, sourceY, targetX, targetY, markerEnd, style }) {
+
+type LatexEdgeProps = {
+    id: string;
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+    style: React.CSSProperties;
+    markerEnd: any;
+    label: string;
+};
+
+
+export default function LatexEdge({ id, sourceX, sourceY, targetX, targetY, style, markerEnd, label }: LatexEdgeProps) {
     const [edgePath, labelX, labelY] = getBezierPath({
         sourceX,
         sourceY,
@@ -10,26 +23,20 @@ export default function latexEdge({ id, sourceX, sourceY, targetX, targetY, mark
         targetY,
     });
 
-
-    // const thing = {
-    //     strokeWidth: 10,
-    //     stroke: '#FF0000',
-
-    // };
-
-
+    const info = "Hello"
+    console.log(id, sourceX, sourceY, targetX, targetY, label)
 
     return (
         <>
-            <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
+            <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd}/>
             <EdgeLabelRenderer>
                 <div style={{
                     position: 'absolute',
                     transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
                     pointerEvents: 'all',
-                    fontSize: '6px',
+                    fontSize: '12px',
                 }}>
-                    <Latex>$\langle P_A, [1], [1], 0 \rangle$</Latex>
+                    <Latex>{label}</Latex>
                 </div>
             </EdgeLabelRenderer>
         </>

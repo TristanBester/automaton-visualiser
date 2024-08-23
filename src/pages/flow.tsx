@@ -1,8 +1,7 @@
-import { ReactFlow, Controls, Background, MarkerType, Position } from '@xyflow/react';
+import { ReactFlow, Controls, Background, MarkerType, Position, EdgeTypes } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { internalNode, terminalNode } from './node';
-import latexEdge from './edge';
-import CustomEdge from './bedge';
+import LatexEdge from './edge';
 
 
 const nodes = [
@@ -27,17 +26,14 @@ const nodes = [
 ];
 const edges = [
     {
-        // id: 'e1-2',
-        // type: 'bi',
-        // source: '1',
-        // target: '2',
-        // label: 'marker size and color',
         id: 'edge-bi-1',
         source: '1',
         target: '2',
-        type: 'latexbidirectional',
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#FF0072', width: 50, height: 50 },
+        type: 'latex',
+        markerEnd: { type: MarkerType.ArrowClosed, color: '#FF0072', width: 25, height: 25 },
         style: { stroke: '#FF0072', strokeWidth: 2 },
+        edgeText: 'hello',
+        label: '$\\langle a, b, \\rangle$',
         animated: true,
     },
     {
@@ -53,8 +49,7 @@ const nodeTypes = {
     terminal: terminalNode,
 };
 const edgeTypes = {
-    bidirectional: CustomEdge,
-    latex: latexEdge
+    latex: LatexEdge
 };
 
 function Flow() {
@@ -64,7 +59,7 @@ function Flow() {
                 nodes={nodes}
                 edges={edges}
                 nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
+                edgeTypes={edgeTypes as EdgeTypes}
             >
                 <Background />
                 <Controls />
