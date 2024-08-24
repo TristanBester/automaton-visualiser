@@ -3,6 +3,7 @@ import '@xyflow/react/dist/style.css';
 import { internalNode, terminalNode } from './node';
 import LatexEdge from './edge';
 import LoopEdge from './loop';
+import { AnimatedNode } from './animated';
 
 
 const nodes = [
@@ -14,7 +15,7 @@ const nodes = [
     },
     {
         id: '2',
-        type: 'internal',
+        type: 'animated',
         position: { x: 200, y: 0 },
         data: { label: 'Hello' },
     },
@@ -67,6 +68,7 @@ const edges = [
 const nodeTypes = {
     internal: internalNode,
     terminal: terminalNode,
+    animated: AnimatedNode,
 };
 const edgeTypes = {
     latex: LatexEdge,
