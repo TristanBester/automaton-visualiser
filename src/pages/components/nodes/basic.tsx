@@ -1,7 +1,24 @@
-import { useCallback } from "react";
-import { Handle, Position } from "@xyflow/react";
+import { useCallback, useState } from "react";
+import { Handle, NodeProps, Position } from "@xyflow/react";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
+import { cn } from "~/utils";
+import { motion } from "framer-motion";
+
+export function CustomNode(props: NodeProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <motion.div
+      animate={props.data.isOpen ? "start" : "end"}
+      transition={{ duration: 3 }}
+      variants={props.data.variants}
+    >
+      Hello
+      <button onClick={() => setIsOpen((isOpen) => !isOpen)}> click</button>
+    </motion.div>
+  );
+}
 
 export function InternalNode() {
   return (

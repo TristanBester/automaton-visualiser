@@ -1,9 +1,58 @@
-import { ReactFlow, Controls, Background, EdgeTypes } from "@xyflow/react";
+import {
+  ReactFlow,
+  Controls,
+  Background,
+  EdgeTypes,
+  useNodesState,
+} from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { nodes, nodeTypes } from "./data/nodes";
+import { initialNodes, nodeTypes } from "./data/nodes";
 import { edges, edgeTypes } from "./data/edges";
+import { useEffect, useState } from "react";
 
 function Flow() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [isInitialState, setIsInitialState] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log("doing the thing");
+      // @ts-ignore
+      setNodes((prev) => {
+        return prev.map((node) => {
+          if (node.id === "1") {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                isOpen: !node.data.isOpen,
+              },
+            };
+          }
+          return node;
+        });
+      });
+    }, 3000);
+  }, []);
+
+  const handleChange = () => {
+    // @ts-ignore
+    setNodes((prev) => {
+      return prev.map((node) => {
+        if (node.id === "1") {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              isOpen: !node.data.isOpen,
+            },
+          };
+        }
+        return node;
+      });
+    });
+  };
+
   return (
     <div style={{ height: "100%" }}>
       <ReactFlow
@@ -13,7 +62,9 @@ function Flow() {
         edgeTypes={edgeTypes as EdgeTypes}
       >
         <Background />
-        <Controls />
+        <button className="absolute left-0 top-0 z-10" onClick={handleChange}>
+          Log nodes
+        </button>
       </ReactFlow>
     </div>
   );
