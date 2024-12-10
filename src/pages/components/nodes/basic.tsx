@@ -4,6 +4,7 @@ import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 import { cn } from "~/utils";
 import { motion } from "framer-motion";
+import { NodeData } from "~/pages/types";
 
 export function CustomNode(props: NodeProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +21,7 @@ export function CustomNode(props: NodeProps) {
   );
 }
 
-export function InternalNode({ data }: NodeProps) {
+export function InternalNode({ data }: NodeProps<NodeData>) {
   return (
     <motion.div
       initial={{ scale: 0 }}
@@ -29,10 +30,12 @@ export function InternalNode({ data }: NodeProps) {
       transition={{ duration: 0.5 }}
     >
       <div
-        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 shadow-md transition-colors duration-500`}
+        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 shadow-md transition-all duration-300`}
         style={{ 
-          backgroundColor: data.color || '#f3f4f6',
-          cursor: 'pointer'
+          backgroundColor: data.style?.backgroundColor || data.color || '#f3f4f6',
+          cursor: 'pointer',
+          transform: data.style?.backgroundColor ? 'scale(1.1)' : 'scale(1)',
+          boxShadow: data.style?.backgroundColor ? '0 0 15px rgba(255, 235, 59, 0.5)' : undefined,
         }}
         onClick={data.onClick}
       >

@@ -1,14 +1,12 @@
 import { MarkerType } from "@xyflow/react";
 import LatexEdge from "../components/edges/latex";
-import LoopEdge from "../components/edges/loop";
 
-// Original graph edges
-export const initialEdges = [
-  // Self-loop on u0
+// Graph 1 edges
+export const graph1Edges = [
   {
-    id: "e-u0-u0-1",
-    source: "u0",
-    target: "u0",
+    id: "e-pack-red-self",
+    source: "pack-red",
+    target: "pack-red",
     type: "loop",
     markerEnd: {
       type: MarkerType.ArrowClosed,
@@ -16,87 +14,240 @@ export const initialEdges = [
       width: 15,
       height: 15,
     },
-    label: "\\langle p_A, [1], [1], 0\\rangle\\n\\langle p_A, [0], [1], 0\\rangle",
-    animated: true,
-  },
-  // u0 to u1
-  {
-    id: "e-u0-u1",
-    source: "u0",
-    target: "u1",
-    type: "latex",
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: "#000000",
-      width: 15,
-      height: 15,
-    },
-    label: "\\langle p_B, [1], [0], 0\\rangle",
-  },
-  // u0 to terminal
-  {
-    id: "e-u0-t1",
-    source: "u0",
-    target: "t1",
-    type: "latex",
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: "#000000",
-      width: 15,
-      height: 15,
-    },
-    label: "\\langle p_B, [1], [0], 0\\rangle",
-  },
-  // Self-loop on u1
-  {
-    id: "e-u1-u1",
-    source: "u1",
-    target: "u1",
-    type: "loop",
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: "#000000",
-      width: 15,
-      height: 15,
-    },
-    label: "\\langle p_C, [1], [-1], 0\\rangle",
-    animated: true,
-  },
-  // u1 to terminal
-  {
-    id: "e-u1-t2",
-    source: "u1",
-    target: "t2",
-    type: "latex",
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: "#000000",
-      width: 15,
-      height: 15,
-    },
-    label: "\\langle p_B, [1], [0], 0\\rangle\\n\\langle \\tau, [0], [0], 0\\rangle",
+    label: "15 Seconds",
   },
 ];
 
-// Alternative graph edges
-export const alternativeEdges = [
+// Graph 2 edges
+export const graph2Edges = [
   {
-    id: "e-u3-u3",
-    source: "u3",
-    target: "u3",
-    type: "loop",
+    id: "e-red-block-1-2",
+    source: "pack-red-block-one",
+    target: "pack-red-block-two",
+    type: "latex",
     markerEnd: {
       type: MarkerType.ArrowClosed,
       color: "#000000",
       width: 15,
       height: 15,
     },
-    label: "\\langle p_C, [1], [-1], 0\\rangle",
-    animated: true,
-  }
+    label: "5 Seconds",
+  },
+  {
+    id: "e-red-block-2-3",
+    source: "pack-red-block-two",
+    target: "pack-red-block-three",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5 Seconds",
+  },
+];
+
+// Graph 3 - First instance edges
+export const graph3FirstEdges = [
+  {
+    id: "e-above-grasp-1",
+    source: "above-red-1",
+    target: "grasp-red-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp-deliver-1",
+    source: "grasp-red-1",
+    target: "deliver-red-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-deliver-grasp2-1",
+    source: "deliver-red-1",
+    target: "grasp-red-two-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp2-block-1",
+    source: "grasp-red-two-1",
+    target: "block-red-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+];
+
+// Graph 3 - Second instance edges
+export const graph3SecondEdges = [
+  {
+    id: "e-above-grasp-2",
+    source: "above-red-2",
+    target: "grasp-red-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp-deliver-2",
+    source: "grasp-red-2",
+    target: "deliver-red-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-deliver-grasp2-2",
+    source: "deliver-red-2",
+    target: "grasp-red-two-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp2-block-2",
+    source: "grasp-red-two-2",
+    target: "block-red-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+];
+
+// Graph 3 - Third instance edges
+export const graph3ThirdEdges = [
+  {
+    id: "e-above-grasp-3",
+    source: "above-red-3",
+    target: "grasp-red-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp-deliver-3",
+    source: "grasp-red-3",
+    target: "deliver-red-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-deliver-grasp2-3",
+    source: "deliver-red-3",
+    target: "grasp-red-two-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp2-block-3",
+    source: "grasp-red-two-3",
+    target: "block-red-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+];
+
+export const graph2GreenEdges = [
+  {
+    id: "e-pack-green-one",
+    source: "pack-green-one-1",
+    target: "pack-green-one-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "next",
+  },
+];
+
+export const graph2BlueEdges = [
+  {
+    id: "e-pack-blue-one",
+    source: "pack-blue-one-1",
+    target: "pack-blue-one-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "next",
+  },
 ];
 
 export const edgeTypes = {
   latex: LatexEdge,
-  loop: LoopEdge,
 };

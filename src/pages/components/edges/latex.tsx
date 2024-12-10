@@ -15,7 +15,7 @@ type LatexEdgeProps = {
   targetY: number;
   style: React.CSSProperties;
   markerEnd: any;
-  label: string;
+  label?: string;
 };
 
 export default function LatexEdge({
@@ -26,7 +26,7 @@ export default function LatexEdge({
   targetY,
   style,
   markerEnd,
-  label,
+  label = "",
 }: LatexEdgeProps) {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -42,27 +42,29 @@ export default function LatexEdge({
   return (
     <>
       <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: "absolute",
-            transform: `translate(-50%, ${labelOffset}px) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: "all",
-            fontSize: "12px",
-            textAlign: "center",
-            width: "max-content",
-            background: "white",
-            padding: "2px 4px",
-            borderRadius: "4px",
-          }}
-        >
-          {label.split("\\n").map((line, i) => (
-            <div key={i}>
-              <Latex>{"$" + line + "$"}</Latex>
-            </div>
-          ))}
-        </div>
-      </EdgeLabelRenderer>
+      {label && (
+        <EdgeLabelRenderer>
+          <div
+            style={{
+              position: "absolute",
+              transform: `translate(-50%, ${labelOffset}px) translate(${labelX}px,${labelY}px)`,
+              pointerEvents: "all",
+              fontSize: "12px",
+              textAlign: "center",
+              width: "max-content",
+              background: "white",
+              padding: "2px 4px",
+              borderRadius: "4px",
+            }}
+          >
+            {label.split("\\n").map((line, i) => (
+              <div key={i}>
+                <Latex>{"$" + line + "$"}</Latex>
+              </div>
+            ))}
+          </div>
+        </EdgeLabelRenderer>
+      )}
     </>
   );
 }
