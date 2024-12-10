@@ -13,6 +13,7 @@ import { graph1Edges, graph2Edges, graph3FirstEdges, graph3SecondEdges, graph3Th
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimationState, getActiveNodesAtTime, redTaskTimings } from "./data/animation";
+import { Container } from "./components/container";
 
 type GraphType = {
   level: 1 | 2 | 3;
@@ -23,6 +24,7 @@ function FlowComponent() {
   const [currentGraph, setCurrentGraph] = useState<GraphType>({ level: 1, group: "red" });
   const { setViewport } = useReactFlow();
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [animationState, setAnimationState] = useState<AnimationState>({
     graph1Active: null,
     graph2Active: null,
@@ -63,14 +65,13 @@ function FlowComponent() {
   };
 
   const startAnimation = () => {
-    switchGraph({ level: 1, group: "red" });
-    
     setIsAnimating(true);
     let startTime = Date.now();
     const totalDuration = redTaskTimings.duration * 1000;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
+      
       if (elapsed >= totalDuration) {
         setIsAnimating(false);
         setAnimationState({
@@ -91,61 +92,56 @@ function FlowComponent() {
   };
 
   const getNodeStyle = (nodeId: string) => {
-    const isActive = 
-      nodeId === animationState.graph1Active ||
-      nodeId === animationState.graph2Active ||
-      nodeId === animationState.graph3Active;
+    if (!isAnimating) {
+      return {
+        backgroundColor: undefined,
+        opacity: 1,
+      };
+    }
+
+    // For Graph 1
+    if (nodeId === "pack-red") {
+      return {
+        backgroundColor: '#FFEB3B',
+        opacity: 1,
+      };
+    }
+
+    // For Graph 2
+    if (nodeId.startsWith("pack-red-block")) {
+      const isActive = nodeId === animationState.graph2Active;
+      return {
+        backgroundColor: isActive ? '#FFEB3B' : '#E0E0E0',
+        opacity: isActive ? 1 : 0.6,
+      };
+    }
+
+    // For Graph 3
+    const isActive = nodeId === animationState.graph3Active;
+    const currentBlock = animationState.graph2Active?.split("-").pop();
+    const nodeNumber = nodeId.split("-").pop();
+    const isInActiveGroup = 
+      (currentBlock === "one" && nodeNumber === "1") ||
+      (currentBlock === "two" && nodeNumber === "2") ||
+      (currentBlock === "three" && nodeNumber === "3");
 
     return {
-      backgroundColor: isActive ? '#FFEB3B' : undefined,
+      backgroundColor: isActive ? '#FFEB3B' : '#E0E0E0',
+      opacity: isInActiveGroup ? (isActive ? 1 : 0.6) : 0.3,
     };
   };
 
-  const mapNodesToIncludeAnimation = (nodes: typeof graph1Nodes) =>
-    nodes.map(node => ({
-      ...node,
-      data: {
-        ...node.data,
-        style: getNodeStyle(node.id),
-        onClick: () => {}
-      }
-    }));
-
-  const switchGraph = async (toGraph: GraphType) => {
-    await setViewport({ x: 0, y: 0, zoom: 0.5 }, { duration: 700 });
-    
-    setCurrentGraph(toGraph);
-    
-    const newNodes = mapNodesToIncludeAnimation(getNodesForGraph(toGraph));
-    setNodes(newNodes);
-    setEdges(getEdgesForGraph(toGraph));
-
-    setTimeout(() => {
-      setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 700 });
-    }, 100);
-  };
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(
-    mapNodesToIncludeAnimation(graph1Nodes)
-  );
-
-  const [edges, setEdges] = useState(graph1Edges);
-
+  // Initialize all nodes and edges once at component mount
   useEffect(() => {
-    const currentNodes = getNodesForGraph(currentGraph);
-    setNodes(mapNodesToIncludeAnimation(currentNodes));
-  }, [animationState, currentGraph]);
-
-  useEffect(() => {
-    const nodes = [
+    const allNodes = [
       ...graph1Nodes,
       ...graph2Nodes,
       ...graph3FirstNodes,
       ...graph3SecondNodes,
       ...graph3ThirdNodes,
     ];
-    setNodes(mapNodesToIncludeAnimation(nodes));
-
+    setNodes(allNodes);
+    
     setEdges([
       ...graph1Edges,
       ...graph2Edges,
@@ -153,27 +149,56 @@ function FlowComponent() {
       ...graph3SecondEdges,
       ...graph3ThirdEdges,
     ]);
+  }, []); // Only run once at mount
 
-    setTimeout(() => {
-      setViewport({ 
-        x: -100,  // Shift view left to show all nodes
-        y: -50,   // Shift view up slightly
-        zoom: 0.3 // Zoom out more to show the wider layout
-      }, { 
-        duration: 700 
-      });
-    }, 100);
-  }, [animationState]);
+  // Update node styles during animation
+  useEffect(() => {
+    if (!nodes.length) return;
+    
+    setNodes(nodes => 
+      nodes.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          style: getNodeStyle(node.id),
+        }
+      }))
+    );
+  }, [animationState, isAnimating]);
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    graph1Nodes
+  );
+
+  const [edges, setEdges] = useState(graph1Edges);
+
+  const getContainerVisibility = (level: number, group?: string) => {
+    if (!isAnimating) return true;
+
+    if (level === 1) {
+      return animationState.graph1Active !== null;
+    }
+
+    if (level === 2) {
+      return animationState.graph2Active !== null;
+    }
+
+    // For level 3 containers
+    if (level === 3 && group) {
+      const currentGroup = animationState.graph2Active?.split("-").pop();
+      return (
+        (group === "one" && currentGroup === "one") ||
+        (group === "two" && currentGroup === "two") ||
+        (group === "three" && currentGroup === "three")
+      );
+    }
+
+    return false;
+  };
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div 
-        style={{ height: "100%", position: "relative" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div style={{ height: "100%", position: "relative" }}>
         <div className="absolute right-4 top-4 z-10 flex gap-2">
           <button
             className="rounded-md bg-green-500 px-4 py-2 text-white shadow-md hover:bg-green-600"
@@ -199,15 +224,73 @@ function FlowComponent() {
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes as EdgeTypes}
           onNodesChange={onNodesChange}
-          fitView
-          zoomOnScroll={false}
-          panOnScroll={false}
+          fitView={false}
+          minZoom={0.1}
+          maxZoom={1.5}
+          defaultPosition={[-400, -100]}
+          defaultZoom={0.35}
+          zoomOnScroll={true}
+          panOnScroll={true}
           nodesDraggable={false}
           nodesConnectable={false}
           elementsSelectable={false}
+          panOnDrag={true}
+          preventScrolling={false}
+          zoomOnPinch={true}
+          zoomOnDoubleClick={true}
         >
           <Background />
           <Controls />
+
+          {(!isAnimating || getContainerVisibility(1)) && (
+            <Container
+              x={1200}
+              y={-50}
+              width={200}
+              height={100}
+              label="Pack Red Blocks (15s)"
+            />
+          )}
+
+          {(!isAnimating || getContainerVisibility(2)) && (
+            <Container
+              x={200}
+              y={150}
+              width={2300}
+              height={150}
+              label="Sequential Tasks (5s each)"
+            />
+          )}
+
+          {(!isAnimating || getContainerVisibility(3, "one")) && (
+            <Container
+              x={50}
+              y={350}
+              width={700}
+              height={150}
+              label="Pack Red Block One (5s)"
+            />
+          )}
+
+          {(!isAnimating || getContainerVisibility(3, "two")) && (
+            <Container
+              x={850}
+              y={350}
+              width={700}
+              height={150}
+              label="Pack Red Block Two (5s)"
+            />
+          )}
+
+          {(!isAnimating || getContainerVisibility(3, "three")) && (
+            <Container
+              x={1650}
+              y={350}
+              width={700}
+              height={150}
+              label="Pack Red Block Three (5s)"
+            />
+          )}
         </ReactFlow>
       </motion.div>
     </AnimatePresence>

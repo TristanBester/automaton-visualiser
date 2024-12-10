@@ -60,15 +60,20 @@ export function getActiveNodesAtTime(time: number): AnimationState {
     timeElapsed: time,
   };
 
-  // Graph 1 is active for the entire 15 seconds
-  if (time <= 15) {
-    state.graph1Active = "pack-red";
-  }
+  // Graph 1 is always active during animation
+  state.graph1Active = "pack-red";
 
-  // Graph 2 timing - three 5-second blocks
+  // Graph 2 timing - determine which block is active
   if (time <= 5) {
     state.graph2Active = "pack-red-block-one";
-    // Graph 3 timing for first block
+  } else if (time <= 10) {
+    state.graph2Active = "pack-red-block-two";
+  } else if (time <= 15) {
+    state.graph2Active = "pack-red-block-three";
+  }
+
+  // Graph 3 timing
+  if (time <= 5) { // First block
     const subTime = time;
     if (subTime <= 1) state.graph3Active = "above-red-1";
     else if (subTime <= 2) state.graph3Active = "grasp-red-1";
@@ -76,9 +81,7 @@ export function getActiveNodesAtTime(time: number): AnimationState {
     else if (subTime <= 4) state.graph3Active = "grasp-red-two-1";
     else state.graph3Active = "block-red-1";
   } 
-  else if (time <= 10) {
-    state.graph2Active = "pack-red-block-two";
-    // Graph 3 timing for second block
+  else if (time <= 10) { // Second block
     const subTime = time - 5;
     if (subTime <= 1) state.graph3Active = "above-red-2";
     else if (subTime <= 2) state.graph3Active = "grasp-red-2";
@@ -86,9 +89,7 @@ export function getActiveNodesAtTime(time: number): AnimationState {
     else if (subTime <= 4) state.graph3Active = "grasp-red-two-2";
     else state.graph3Active = "block-red-2";
   }
-  else if (time <= 15) {
-    state.graph2Active = "pack-red-block-three";
-    // Graph 3 timing for third block
+  else if (time <= 15) { // Third block
     const subTime = time - 10;
     if (subTime <= 1) state.graph3Active = "above-red-3";
     else if (subTime <= 2) state.graph3Active = "grasp-red-3";
