@@ -1,5 +1,6 @@
 import { MarkerType } from "@xyflow/react";
 import LatexEdge from "../components/edges/latex";
+import LoopEdge from "../components/edges/loop";
 
 // Graph 1 edges
 export const graph1Edges = [
@@ -14,7 +15,7 @@ export const graph1Edges = [
       width: 15,
       height: 15,
     },
-    label: "15 Seconds",
+    label: "15s",
   },
   {
     id: "e-pack-red-green",
@@ -27,6 +28,19 @@ export const graph1Edges = [
       width: 15,
       height: 15,
     },
+  },
+  {
+    id: "e-pack-green-self",
+    source: "pack-green",
+    target: "pack-green",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "15s",
   },
 ];
 
@@ -57,6 +71,45 @@ export const graph2Edges = [
       height: 15,
     },
     label: "5 Seconds",
+  },
+  {
+    id: "e-pack-red-block-one-self",
+    source: "pack-red-block-one",
+    target: "pack-red-block-one",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5s",
+  },
+  {
+    id: "e-pack-red-block-two-self",
+    source: "pack-red-block-two",
+    target: "pack-red-block-two",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5s",
+  },
+  {
+    id: "e-pack-red-block-three-self",
+    source: "pack-red-block-three",
+    target: "pack-red-block-three",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5s",
   },
 ];
 
@@ -113,6 +166,136 @@ export const graph3FirstEdges = [
       height: 15,
     },
     label: "1 Second",
+  },
+  {
+    id: "e-above-red-1-self-1",
+    source: "above-red-1",
+    target: "above-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-above-red-1-self-2",
+    source: "above-red-1",
+    target: "above-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-grasp-red-1-self-1",
+    source: "grasp-red-1",
+    target: "grasp-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-grasp-red-1-self-2",
+    source: "grasp-red-1",
+    target: "grasp-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-deliver-red-1-self-1",
+    source: "deliver-red-1",
+    target: "deliver-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-deliver-red-1-self-2",
+    source: "deliver-red-1",
+    target: "deliver-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-grasp-red-two-1-self-1",
+    source: "grasp-red-two-1",
+    target: "grasp-red-two-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-grasp-red-two-1-self-2",
+    source: "grasp-red-two-1",
+    target: "grasp-red-two-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-block-red-1-self-1",
+    source: "block-red-1",
+    target: "block-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
+  },
+  {
+    id: "e-block-red-1-self-2",
+    source: "block-red-1",
+    target: "block-red-1",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "0.5s",
   },
 ];
 
@@ -255,6 +438,45 @@ export const graph2GreenEdges = [
     },
     label: "5 Seconds",
   },
+  {
+    id: "e-pack-green-block-one-self",
+    source: "pack-green-block-one",
+    target: "pack-green-block-one",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5s",
+  },
+  {
+    id: "e-pack-green-block-two-self",
+    source: "pack-green-block-two",
+    target: "pack-green-block-two",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5s",
+  },
+  {
+    id: "e-pack-green-block-three-self",
+    source: "pack-green-block-three",
+    target: "pack-green-block-three",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5s",
+  },
 ];
 
 export const graph2BlueEdges = [
@@ -275,6 +497,7 @@ export const graph2BlueEdges = [
 
 export const edgeTypes = {
   latex: LatexEdge,
+  loop: LoopEdge,
 };
 
 // Graph 3 - Green First instance edges

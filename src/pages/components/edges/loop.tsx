@@ -33,24 +33,52 @@ export default function LoopEdge({
   markerEnd,
   label
 }: LoopEdgeProps) {
-  const offset = 50;
-  const controlOffset = 80;
+  const radius = 40;
+  
+  // Determine if this is the second loop (should be below)
+  const isSecondLoop = id.endsWith('self-2');
+  
+  // Create path either above or below the node
+  const path = isSecondLoop ? 
+    // Below loop
+    `
+      M ${sourceX} ${sourceY}
+      C ${sourceX + radius} ${sourceY + radius},
+        ${sourceX + radius} ${sourceY + radius * 2},
+        ${sourceX} ${sourceY + radius * 2}
+      C ${sourceX - radius} ${sourceY + radius * 2},
+        ${sourceX - radius} ${sourceY + radius},
+        ${sourceX} ${sourceY}
+    ` :
+    // Above loop
+    `
+      M ${sourceX} ${sourceY}
+      C ${sourceX + radius} ${sourceY - radius},
+        ${sourceX + radius} ${sourceY - radius * 2},
+        ${sourceX} ${sourceY - radius * 2}
+      C ${sourceX - radius} ${sourceY - radius * 2},
+        ${sourceX - radius} ${sourceY - radius},
+        ${sourceX} ${sourceY}
+    `;
 
-  // Calculate control points for a more circular loop
-  const controlX = sourceX - controlOffset;
-  const controlY = sourceY - controlOffset;
-
-  const path = `M ${sourceX} ${sourceY} 
-                C ${controlX} ${controlY},
-                  ${controlX} ${controlY},
-                  ${sourceX} ${sourceY}`;
-
-  const labelX = sourceX - controlOffset;
-  const labelY = sourceY - controlOffset - 10;
+  // Position label above or below the loop
+  const labelX = sourceX;
+  const labelY = isSecondLoop ? 
+    sourceY + radius * 2 + 10 :  // Below loop
+    sourceY - radius * 2 - 10;   // Above loop
 
   return (
     <>
-      <BaseEdge id={id} path={path} style={style} markerEnd={markerEnd} />
+      <BaseEdge 
+        id={id} 
+        path={path} 
+        style={{
+          ...style,
+          strokeWidth: 2,
+          stroke: '#000',
+        }} 
+        markerEnd={markerEnd} 
+      />
       <EdgeLabelRenderer>
         <div
           style={{

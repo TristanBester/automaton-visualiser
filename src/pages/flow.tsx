@@ -15,11 +15,55 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimationState, getActiveNodesAtTime, redTaskTimings } from "./data/animation";
 import { Container } from "./components/container";
-import { LAYOUT } from "./constants";
+import { LAYOUT, ANIMATION_CONFIG, STYLES, TASK_DESCRIPTIONS, TASK_STATES } from '~/config';
 
 type GraphType = {
   level: 1 | 2 | 3;
   group: "red" | "green" | "blue";
+};
+
+// Add new type for task descriptions
+type TaskDescription = {
+  [key: string]: string;
+};
+
+// Add task descriptions mapping
+const taskDescriptions: TaskDescription = {
+  "above-red-1": "Moving above red block 1",
+  "grasp-red-1": "Grasping red block 1",
+  "deliver-red-1": "Delivering red block 1",
+  "grasp-red-two-1": "Adjusting grip on red block 1",
+  "block-red-1": "Placing red block 1",
+  
+  "above-red-2": "Moving above red block 2",
+  "grasp-red-2": "Grasping red block 2",
+  "deliver-red-2": "Delivering red block 2",
+  "grasp-red-two-2": "Adjusting grip on red block 2",
+  "block-red-2": "Placing red block 2",
+  
+  "above-red-3": "Moving above red block 3",
+  "grasp-red-3": "Grasping red block 3",
+  "deliver-red-3": "Delivering red block 3",
+  "grasp-red-two-3": "Adjusting grip on red block 3",
+  "block-red-3": "Placing red block 3",
+  
+  "above-green-1": "Moving above green block 1",
+  "grasp-green-1": "Grasping green block 1",
+  "deliver-green-1": "Delivering green block 1",
+  "grasp-green-two-1": "Adjusting grip on green block 1",
+  "block-green-1": "Placing green block 1",
+  
+  "above-green-2": "Moving above green block 2",
+  "grasp-green-2": "Grasping green block 2",
+  "deliver-green-2": "Delivering green block 2",
+  "grasp-green-two-2": "Adjusting grip on green block 2",
+  "block-green-2": "Placing green block 2",
+  
+  "above-green-3": "Moving above green block 3",
+  "grasp-green-3": "Grasping green block 3",
+  "deliver-green-3": "Delivering green block 3",
+  "grasp-green-two-3": "Adjusting grip on green block 3",
+  "block-green-3": "Placing green block 3",
 };
 
 function FlowComponent() {
@@ -34,6 +78,7 @@ function FlowComponent() {
     timeElapsed: 0,
     isGreenPhase: false
   });
+  const [animationFrameId, setAnimationFrameId] = useState<number | null>(null);
 
   const getNodesForGraph = (graph: GraphType) => {
     if (graph.level === 1) return graph1Nodes;
@@ -70,23 +115,15 @@ function FlowComponent() {
   const startAnimation = () => {
     setIsAnimating(true);
     let startTime = Date.now();
-    const totalDuration = redTaskTimings.duration * 1000;
+    const totalDuration = ANIMATION_CONFIG.DURATION.TOTAL;
 
-    // Set initial viewport for red phase
     setViewport(LAYOUT.VIEWPORTS.RED, { duration: LAYOUT.TRANSITION_DURATION });
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
       
       if (elapsed >= totalDuration) {
-        setIsAnimating(false);
-        setAnimationState({
-          graph1Active: null,
-          graph2Active: null,
-          graph3Active: null,
-          timeElapsed: redTaskTimings.duration,
-          isGreenPhase: false
-        });
+        stopAnimation();
         return;
       }
 
@@ -99,11 +136,41 @@ function FlowComponent() {
       }
 
       setAnimationState(newState);
-      requestAnimationFrame(animate);
+      const frameId = requestAnimationFrame(animate);
+      setAnimationFrameId(frameId);
     };
 
-    requestAnimationFrame(animate);
+    const frameId = requestAnimationFrame(animate);
+    setAnimationFrameId(frameId);
   };
+
+  const stopAnimation = () => {
+    // Cancel the animation frame if it exists
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+      setAnimationFrameId(null);
+    }
+
+    setIsAnimating(false);
+    setAnimationState({
+      graph1Active: null,
+      graph2Active: null,
+      graph3Active: null,
+      timeElapsed: 0,
+      isGreenPhase: false
+    });
+    // Reset viewport to initial position
+    setViewport(LAYOUT.VIEWPORTS.RED, { duration: LAYOUT.TRANSITION_DURATION });
+  };
+
+  // Clean up animation frame on component unmount
+  useEffect(() => {
+    return () => {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [animationFrameId]);
 
   const getNodeVisibility = (nodeId: string) => {
     if (!isAnimating) return true;
@@ -137,30 +204,25 @@ function FlowComponent() {
   };
 
   const getNodeStyle = (nodeId: string) => {
-    if (!isAnimating) {
-      return {
-        backgroundColor: undefined,
-        opacity: 1,
-      };
+    if (!isAnimating) return STYLES.NODES.DEFAULT;
+
+    // For Graph 1 nodes
+    if (nodeId === animationState.graph1Active) {
+      return STYLES.NODES.ACTIVE;
     }
 
-    const isActive = 
-      nodeId === animationState.graph1Active ||
-      nodeId === animationState.graph2Active ||
-      nodeId === animationState.graph3Active;
-
-    // For Graph 2, reduce opacity of inactive nodes but keep them visible
-    if (nodeId.startsWith("pack-red-block")) {
-      return {
-        backgroundColor: isActive ? '#FFEB3B' : '#E0E0E0',
-        opacity: isActive ? 1 : 0.6,
-      };
+    // For Graph 2 nodes
+    if (nodeId === animationState.graph2Active) {
+      return STYLES.NODES.ACTIVE;
     }
 
-    return {
-      backgroundColor: isActive ? '#FFEB3B' : '#E0E0E0',
-      opacity: isActive ? 1 : 0.6,
-    };
+    // For Graph 3 nodes
+    if (nodeId === animationState.graph3Active) {
+      return STYLES.NODES.ACTIVE;
+    }
+
+    // All other nodes should be inactive
+    return STYLES.NODES.INACTIVE;
   };
 
   // Initialize all nodes and edges once at component mount
@@ -246,26 +308,60 @@ function FlowComponent() {
   // Initialize viewport once at mount
   useEffect(() => {
     setViewport({
-      x: 100,
-      y: 300,
-      zoom: 0.5
+      x: LAYOUT.VIEWPORTS.INITIAL.x,
+      y: LAYOUT.VIEWPORTS.INITIAL.y,
+      zoom: LAYOUT.VIEWPORTS.INITIAL.zoom
     }, { duration: 0 });
   }, []);
 
   // Fix nodeTypes type error
   const customNodeTypes = nodeTypes as unknown as NodeTypes;
 
+  // Add getCurrentTaskDescription helper
+  const getCurrentTaskDescription = () => {
+    if (!isAnimating) return TASK_STATES.READY;
+    
+    const activeTask = animationState.graph3Active;
+    if (!activeTask) {
+      return animationState.isGreenPhase ? 
+        TASK_STATES.PROCESSING_GREEN : 
+        TASK_STATES.PROCESSING_RED;
+    }
+    
+    return TASK_DESCRIPTIONS[activeTask] || TASK_STATES.DEFAULT;
+  };
+
   return (
     <AnimatePresence mode="wait">
       <motion.div style={{ height: "100%", position: "relative" }}>
+        {/* Add task description UI element */}
+        <div className="absolute left-1/2 top-4 z-10 -translate-x-1/2 transform">
+          <motion.div 
+            className="rounded-lg bg-white px-6 py-3 text-lg font-semibold shadow-lg"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {getCurrentTaskDescription()}
+          </motion.div>
+        </div>
+
         <div className="absolute right-4 top-4 z-10 flex gap-2">
           <button
-            className="rounded-md bg-green-500 px-4 py-2 text-white shadow-md hover:bg-green-600"
+            className="rounded-md bg-green-500 px-4 py-2 text-white shadow-md hover:bg-green-600 disabled:opacity-50"
             onClick={startAnimation}
             disabled={isAnimating}
           >
             {isAnimating ? 'Animating...' : 'Start Animation'}
           </button>
+          {isAnimating && (
+            <button
+              className="rounded-md bg-red-500 px-4 py-2 text-white shadow-md hover:bg-red-600"
+              onClick={stopAnimation}
+            >
+              Stop
+            </button>
+          )}
           <div className="rounded-md bg-white px-4 py-2 shadow-md">
             Time: {animationState.timeElapsed.toFixed(1)}s
           </div>
@@ -300,114 +396,115 @@ function FlowComponent() {
           <Controls />
 
           {/* Level 1 Containers */}
-          {(!isAnimating || getContainerVisibility(1, undefined, "#ff9999")) && (
+          {(!isAnimating || getContainerVisibility(1, undefined, STYLES.COLORS.RED)) && (
             <Container
-              x={LAYOUT.BASE_X + 630}
-              y={LAYOUT.BASE_Y}
-              width={LAYOUT.CONTAINER_WIDTH}
-              height={LAYOUT.CONTAINER_HEIGHT}
+              x={LAYOUT.CONTAINER.LEVEL_1.RED.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_1}
+              width={LAYOUT.CONTAINER.LEVEL_1.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Red Blocks (15s)"
-              color="#ff9999"
+              color={STYLES.COLORS.RED}
             />
           )}
-          {(!isAnimating || getContainerVisibility(1, undefined, "#90EE90")) && (
+          {(!isAnimating || getContainerVisibility(1, undefined, STYLES.COLORS.GREEN)) && (
             <Container
-              x={LAYOUT.BASE_X + 3380}
-              y={LAYOUT.BASE_Y}
-              width={LAYOUT.CONTAINER_WIDTH}
-              height={LAYOUT.CONTAINER_HEIGHT}
+              x={LAYOUT.CONTAINER.LEVEL_1.GREEN.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_1}
+              width={LAYOUT.CONTAINER.LEVEL_1.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Green Blocks"
-              color="#90EE90"
+              color={STYLES.COLORS.GREEN}
             />
           )}
 
           {/* Level 2 Containers */}
-          {(!isAnimating || getContainerVisibility(2, undefined, "#ff9999")) && (
+          {(!isAnimating || getContainerVisibility(2, undefined, STYLES.COLORS.RED)) && (
             <Container
-              x={LAYOUT.BASE_X - 100}
-              y={150}
-              width={1800}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_2.RED.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_2}
+              width={LAYOUT.CONTAINER.LEVEL_2.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Red Sequential Tasks (5s each)"
-              color="#ff9999"
+              color={STYLES.COLORS.RED}
             />
           )}
-          {(!isAnimating || getContainerVisibility(2, undefined, "#90EE90")) && (
+
+          {(!isAnimating || getContainerVisibility(2, undefined, STYLES.COLORS.GREEN)) && (
             <Container
-              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 100}
-              y={150}
-              width={1800}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_2.GREEN.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_2}
+              width={LAYOUT.CONTAINER.LEVEL_2.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Green Sequential Tasks (5s each)"
-              color="#90EE90"
+              color={STYLES.COLORS.GREEN}
             />
           )}
 
-          {/* Level 3 Red Containers */}
-          {(!isAnimating || getContainerVisibility(3, "one", "#ff9999")) && (
+          {/* Level 3 Containers */}
+          {(!isAnimating || getContainerVisibility(3, "one", STYLES.COLORS.RED)) && (
             <Container
-              x={50}
-              y={350}
-              width={750}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_3.RED.FIRST.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_3}
+              width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Red Block One (5s)"
-              color="#ff9999"
+              color={STYLES.COLORS.RED}
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "two", "#ff9999")) && (
+          {(!isAnimating || getContainerVisibility(3, "two", STYLES.COLORS.RED)) && (
             <Container
-              x={950}
-              y={350}
-              width={750}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_3.RED.SECOND.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_3}
+              width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Red Block Two (5s)"
-              color="#ff9999"
+              color={STYLES.COLORS.RED}
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "three", "#ff9999")) && (
+          {(!isAnimating || getContainerVisibility(3, "three", STYLES.COLORS.RED)) && (
             <Container
-              x={1850}
-              y={350}
-              width={750}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_3.RED.THIRD.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_3}
+              width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Red Block Three (5s)"
-              color="#ff9999"
+              color={STYLES.COLORS.RED}
             />
           )}
 
           {/* Level 3 Green Containers */}
-          {(!isAnimating || getContainerVisibility(3, "one", "#90EE90")) && (
+          {(!isAnimating || getContainerVisibility(3, "one", STYLES.COLORS.GREEN)) && (
             <Container
-              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 550}
-              y={350}
-              width={750}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_3.GREEN.FIRST.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_3}
+              width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Green Block One (5s)"
-              color="#90EE90"
+              color={STYLES.COLORS.GREEN}
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "two", "#90EE90")) && (
+          {(!isAnimating || getContainerVisibility(3, "two", STYLES.COLORS.GREEN)) && (
             <Container
-              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT + 350}
-              y={350}
-              width={750}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_3.GREEN.SECOND.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_3}
+              width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Green Block Two (5s)"
-              color="#90EE90"
+              color={STYLES.COLORS.GREEN}
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "three", "#90EE90")) && (
+          {(!isAnimating || getContainerVisibility(3, "three", STYLES.COLORS.GREEN)) && (
             <Container
-              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT + 1250}
-              y={350}
-              width={750}
-              height={150}
+              x={LAYOUT.CONTAINER.LEVEL_3.GREEN.THIRD.X}
+              y={LAYOUT.CONTAINER_Y.LEVEL_3}
+              width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
+              height={LAYOUT.CONTAINER.HEIGHT}
               label="Pack Green Block Three (5s)"
-              color="#90EE90"
+              color={STYLES.COLORS.GREEN}
             />
           )}
         </ReactFlow>

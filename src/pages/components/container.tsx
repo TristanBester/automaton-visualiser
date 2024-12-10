@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { useReactFlow, useStore } from "@xyflow/react";
+import { STYLES } from "~/config";
 
 type ContainerProps = {
   children?: ReactNode;
@@ -12,9 +13,14 @@ type ContainerProps = {
   dashed?: boolean;
 };
 
-export function Container({ children, label, x, y, width, height, color = "#ff9999", dashed = true }: ContainerProps) {
+export function Container({ children, label, x, y, width, height, color = STYLES.COLORS.RED, dashed = true }: ContainerProps) {
   const { transform } = useStore();
   const [transformX, transformY, zoom] = transform;
+
+  // Determine background color based on container color
+  const backgroundColor = color === STYLES.COLORS.GREEN 
+    ? STYLES.CONTAINERS.BACKGROUNDS.GREEN 
+    : STYLES.CONTAINERS.BACKGROUNDS.RED;
 
   return (
     <div
@@ -26,7 +32,7 @@ export function Container({ children, label, x, y, width, height, color = "#ff99
         border: `2px ${dashed ? 'dashed' : 'solid'} ${color}`,
         borderRadius: '8px',
         padding: '20px',
-        backgroundColor: 'rgba(255, 153, 153, 0.05)',
+        backgroundColor,
         pointerEvents: 'none',
         zIndex: -1,
         transformOrigin: '0 0',
