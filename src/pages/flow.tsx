@@ -32,6 +32,7 @@ function FlowComponent() {
     graph2Active: null,
     graph3Active: null,
     timeElapsed: 0,
+    isGreenPhase: false
   });
 
   const getNodesForGraph = (graph: GraphType) => {
@@ -71,6 +72,9 @@ function FlowComponent() {
     let startTime = Date.now();
     const totalDuration = redTaskTimings.duration * 1000;
 
+    // Set initial viewport for red phase
+    setViewport(LAYOUT.VIEWPORTS.RED, { duration: LAYOUT.TRANSITION_DURATION });
+
     const animate = () => {
       const elapsed = Date.now() - startTime;
       
@@ -81,12 +85,20 @@ function FlowComponent() {
           graph2Active: null,
           graph3Active: null,
           timeElapsed: redTaskTimings.duration,
+          isGreenPhase: false
         });
         return;
       }
 
       const timeInSeconds = elapsed / 1000;
-      setAnimationState(getActiveNodesAtTime(timeInSeconds));
+      const newState = getActiveNodesAtTime(timeInSeconds);
+
+      // Check if we're transitioning from red to green phase
+      if (!animationState.isGreenPhase && newState.isGreenPhase) {
+        setViewport(LAYOUT.VIEWPORTS.GREEN, { duration: LAYOUT.TRANSITION_DURATION });
+      }
+
+      setAnimationState(newState);
       requestAnimationFrame(animate);
     };
 
@@ -96,11 +108,22 @@ function FlowComponent() {
   const getNodeVisibility = (nodeId: string) => {
     if (!isAnimating) return true;
 
-    // Graph 1 is always visible during animation
-    if (nodeId === "pack-red") return true;
+    // Graph 1 is always visible
+    if (nodeId === "pack-red" || nodeId === "pack-green") {
+      return true;
+    }
 
-    // For Graph 2 - always show all nodes in Graph 2
-    if (nodeId.startsWith("pack-red-block")) return true;
+    const isGreenNode = nodeId.includes("green");
+    const isRedNode = nodeId.includes("red");
+
+    // Hide green nodes during red phase and vice versa (except for layer 1)
+    if (animationState.isGreenPhase && isRedNode) return false;
+    if (!animationState.isGreenPhase && isGreenNode) return false;
+
+    // For Graph 2 - always show all nodes in the active phase
+    if (nodeId.startsWith("pack-red-block") || nodeId.startsWith("pack-green-block")) {
+      return true;
+    }
 
     // For Graph 3
     const nodeNumber = nodeId.split("-").pop();
@@ -190,12 +213,18 @@ function FlowComponent() {
 
   const [edges, setEdges] = useState(graph1Edges);
 
-  const getContainerVisibility = (level: number, group?: string) => {
+  const getContainerVisibility = (level: number, group?: string, color?: string) => {
     if (!isAnimating) return true;
 
-    if (level === 1) {
-      return animationState.graph1Active !== null;
-    }
+    // Level 1 containers are always visible
+    if (level === 1) return true;
+
+    // During red phase, hide green containers and vice versa (except for level 1)
+    const isGreenContainer = color === "#90EE90";
+    const isRedContainer = color === "#ff9999";
+    
+    if (animationState.isGreenPhase && isRedContainer) return false;
+    if (!animationState.isGreenPhase && isGreenContainer) return false;
 
     if (level === 2) {
       return animationState.graph2Active !== null;
@@ -257,67 +286,65 @@ function FlowComponent() {
           fitView={false}
           minZoom={0.1}
           maxZoom={1.5}
-          zoomOnScroll={true}
-          panOnScroll={true}
+          zoomOnScroll={!isAnimating}
+          panOnScroll={!isAnimating}
           nodesDraggable={false}
           nodesConnectable={false}
           elementsSelectable={false}
-          panOnDrag={true}
-          preventScrolling={false}
-          zoomOnPinch={true}
-          zoomOnDoubleClick={true}
+          panOnDrag={!isAnimating}
+          preventScrolling={isAnimating}
+          zoomOnPinch={!isAnimating}
+          zoomOnDoubleClick={!isAnimating}
         >
           <Background />
           <Controls />
 
           {/* Level 1 Containers */}
-          {(!isAnimating || getContainerVisibility(1)) && (
-            <>
-              <Container
-                x={LAYOUT.BASE_X + 630}
-                y={LAYOUT.BASE_Y}
-                width={LAYOUT.CONTAINER_WIDTH}
-                height={LAYOUT.CONTAINER_HEIGHT}
-                label="Pack Red Blocks (15s)"
-                color="#ff9999"
-              />
-              <Container
-                x={LAYOUT.BASE_X + 3380}
-                y={LAYOUT.BASE_Y}
-                width={LAYOUT.CONTAINER_WIDTH}
-                height={LAYOUT.CONTAINER_HEIGHT}
-                label="Pack Green Blocks"
-                color="#90EE90"
-              />
-            </>
+          {(!isAnimating || getContainerVisibility(1, undefined, "#ff9999")) && (
+            <Container
+              x={LAYOUT.BASE_X + 630}
+              y={LAYOUT.BASE_Y}
+              width={LAYOUT.CONTAINER_WIDTH}
+              height={LAYOUT.CONTAINER_HEIGHT}
+              label="Pack Red Blocks (15s)"
+              color="#ff9999"
+            />
+          )}
+          {(!isAnimating || getContainerVisibility(1, undefined, "#90EE90")) && (
+            <Container
+              x={LAYOUT.BASE_X + 3380}
+              y={LAYOUT.BASE_Y}
+              width={LAYOUT.CONTAINER_WIDTH}
+              height={LAYOUT.CONTAINER_HEIGHT}
+              label="Pack Green Blocks"
+              color="#90EE90"
+            />
           )}
 
           {/* Level 2 Containers */}
-          {(!isAnimating || getContainerVisibility(2)) && (
-            <>
-              {/* Red Graph Container */}
-              <Container
-                x={LAYOUT.BASE_X - 100}
-                y={150}
-                width={1800}
-                height={150}
-                label="Red Sequential Tasks (5s each)"
-                color="#ff9999"
-              />
-              {/* Green Graph Container */}
-              <Container
-                x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 100}
-                y={150}
-                width={1800}
-                height={150}
-                label="Green Sequential Tasks (5s each)"
-                color="#90EE90"
-              />
-            </>
+          {(!isAnimating || getContainerVisibility(2, undefined, "#ff9999")) && (
+            <Container
+              x={LAYOUT.BASE_X - 100}
+              y={150}
+              width={1800}
+              height={150}
+              label="Red Sequential Tasks (5s each)"
+              color="#ff9999"
+            />
+          )}
+          {(!isAnimating || getContainerVisibility(2, undefined, "#90EE90")) && (
+            <Container
+              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 100}
+              y={150}
+              width={1800}
+              height={150}
+              label="Green Sequential Tasks (5s each)"
+              color="#90EE90"
+            />
           )}
 
           {/* Level 3 Red Containers */}
-          {(!isAnimating || getContainerVisibility(3, "one")) && (
+          {(!isAnimating || getContainerVisibility(3, "one", "#ff9999")) && (
             <Container
               x={50}
               y={350}
@@ -328,7 +355,7 @@ function FlowComponent() {
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "two")) && (
+          {(!isAnimating || getContainerVisibility(3, "two", "#ff9999")) && (
             <Container
               x={950}
               y={350}
@@ -339,7 +366,7 @@ function FlowComponent() {
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "three")) && (
+          {(!isAnimating || getContainerVisibility(3, "three", "#ff9999")) && (
             <Container
               x={1850}
               y={350}
@@ -351,7 +378,7 @@ function FlowComponent() {
           )}
 
           {/* Level 3 Green Containers */}
-          {(!isAnimating || getContainerVisibility(3, "one")) && (
+          {(!isAnimating || getContainerVisibility(3, "one", "#90EE90")) && (
             <Container
               x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 550}
               y={350}
@@ -362,7 +389,7 @@ function FlowComponent() {
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "two")) && (
+          {(!isAnimating || getContainerVisibility(3, "two", "#90EE90")) && (
             <Container
               x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT + 350}
               y={350}
@@ -373,7 +400,7 @@ function FlowComponent() {
             />
           )}
 
-          {(!isAnimating || getContainerVisibility(3, "three")) && (
+          {(!isAnimating || getContainerVisibility(3, "three", "#90EE90")) && (
             <Container
               x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT + 1250}
               y={350}

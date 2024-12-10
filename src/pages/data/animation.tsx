@@ -3,6 +3,7 @@ export type AnimationState = {
   graph2Active: string | null;
   graph3Active: string | null;
   timeElapsed: number;
+  isGreenPhase: boolean;
 };
 
 export type TaskTiming = {
@@ -14,7 +15,7 @@ export type TaskTiming = {
 // Define the hierarchical timing structure
 export const redTaskTimings: TaskTiming = {
   id: "pack-red",
-  duration: 15,
+  duration: 30,
   subtasks: [
     {
       id: "pack-red-block-one",
@@ -53,49 +54,78 @@ export const redTaskTimings: TaskTiming = {
 };
 
 export function getActiveNodesAtTime(time: number): AnimationState {
+  const redPhaseDuration = 15;
+  const isGreenPhase = time > redPhaseDuration;
+  const adjustedTime = isGreenPhase ? time - redPhaseDuration : time;
+
   const state: AnimationState = {
     graph1Active: null,
     graph2Active: null,
     graph3Active: null,
     timeElapsed: time,
+    isGreenPhase
   };
 
-  // Graph 1 is always active during animation
-  state.graph1Active = "pack-red";
+  if (isGreenPhase) {
+    state.graph1Active = "pack-green";
 
-  // Graph 2 timing - determine which block is active
-  if (time <= 5) {
-    state.graph2Active = "pack-red-block-one";
-  } else if (time <= 10) {
-    state.graph2Active = "pack-red-block-two";
-  } else if (time <= 15) {
-    state.graph2Active = "pack-red-block-three";
-  }
+    if (adjustedTime <= 5) {
+      state.graph2Active = "pack-green-block-one";
+      const subTime = adjustedTime;
+      if (subTime <= 1) state.graph3Active = "above-green-1";
+      else if (subTime <= 2) state.graph3Active = "grasp-green-1";
+      else if (subTime <= 3) state.graph3Active = "deliver-green-1";
+      else if (subTime <= 4) state.graph3Active = "grasp-green-two-1";
+      else state.graph3Active = "block-green-1";
+    } 
+    else if (adjustedTime <= 10) {
+      state.graph2Active = "pack-green-block-two";
+      const subTime = adjustedTime - 5;
+      if (subTime <= 1) state.graph3Active = "above-green-2";
+      else if (subTime <= 2) state.graph3Active = "grasp-green-2";
+      else if (subTime <= 3) state.graph3Active = "deliver-green-2";
+      else if (subTime <= 4) state.graph3Active = "grasp-green-two-2";
+      else state.graph3Active = "block-green-2";
+    }
+    else if (adjustedTime <= 15) {
+      state.graph2Active = "pack-green-block-three";
+      const subTime = adjustedTime - 10;
+      if (subTime <= 1) state.graph3Active = "above-green-3";
+      else if (subTime <= 2) state.graph3Active = "grasp-green-3";
+      else if (subTime <= 3) state.graph3Active = "deliver-green-3";
+      else if (subTime <= 4) state.graph3Active = "grasp-green-two-3";
+      else state.graph3Active = "block-green-3";
+    }
+  } else {
+    state.graph1Active = "pack-red";
 
-  // Graph 3 timing
-  if (time <= 5) { // First block
-    const subTime = time;
-    if (subTime <= 1) state.graph3Active = "above-red-1";
-    else if (subTime <= 2) state.graph3Active = "grasp-red-1";
-    else if (subTime <= 3) state.graph3Active = "deliver-red-1";
-    else if (subTime <= 4) state.graph3Active = "grasp-red-two-1";
-    else state.graph3Active = "block-red-1";
-  } 
-  else if (time <= 10) { // Second block
-    const subTime = time - 5;
-    if (subTime <= 1) state.graph3Active = "above-red-2";
-    else if (subTime <= 2) state.graph3Active = "grasp-red-2";
-    else if (subTime <= 3) state.graph3Active = "deliver-red-2";
-    else if (subTime <= 4) state.graph3Active = "grasp-red-two-2";
-    else state.graph3Active = "block-red-2";
-  }
-  else if (time <= 15) { // Third block
-    const subTime = time - 10;
-    if (subTime <= 1) state.graph3Active = "above-red-3";
-    else if (subTime <= 2) state.graph3Active = "grasp-red-3";
-    else if (subTime <= 3) state.graph3Active = "deliver-red-3";
-    else if (subTime <= 4) state.graph3Active = "grasp-red-two-3";
-    else state.graph3Active = "block-red-3";
+    if (time <= 5) {
+      state.graph2Active = "pack-red-block-one";
+      const subTime = time;
+      if (subTime <= 1) state.graph3Active = "above-red-1";
+      else if (subTime <= 2) state.graph3Active = "grasp-red-1";
+      else if (subTime <= 3) state.graph3Active = "deliver-red-1";
+      else if (subTime <= 4) state.graph3Active = "grasp-red-two-1";
+      else state.graph3Active = "block-red-1";
+    } 
+    else if (time <= 10) {
+      state.graph2Active = "pack-red-block-two";
+      const subTime = time - 5;
+      if (subTime <= 1) state.graph3Active = "above-red-2";
+      else if (subTime <= 2) state.graph3Active = "grasp-red-2";
+      else if (subTime <= 3) state.graph3Active = "deliver-red-2";
+      else if (subTime <= 4) state.graph3Active = "grasp-red-two-2";
+      else state.graph3Active = "block-red-2";
+    }
+    else if (time <= 15) {
+      state.graph2Active = "pack-red-block-three";
+      const subTime = time - 10;
+      if (subTime <= 1) state.graph3Active = "above-red-3";
+      else if (subTime <= 2) state.graph3Active = "grasp-red-3";
+      else if (subTime <= 3) state.graph3Active = "deliver-red-3";
+      else if (subTime <= 4) state.graph3Active = "grasp-red-two-3";
+      else state.graph3Active = "block-red-3";
+    }
   }
 
   return state;
