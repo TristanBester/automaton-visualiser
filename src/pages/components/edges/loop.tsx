@@ -8,6 +8,7 @@ import {
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 import { LAYOUT } from "~/config";
+import { useState } from "react";
 
 type LoopEdgeProps = {
   id: string;
@@ -20,6 +21,7 @@ type LoopEdgeProps = {
   style: React.CSSProperties;
   markerEnd: string;
   label?: string;
+  tooltip?: string;
 };
 
 export default function LoopEdge({
@@ -32,11 +34,15 @@ export default function LoopEdge({
   targetPosition,
   style = {},
   markerEnd,
-  label
+  label,
+  tooltip = "Self-loop transition"  // Default tooltip text
 }: LoopEdgeProps) {
+  const [showTooltip, setShowTooltip] = useState(false);
+  
   const radius = LAYOUT.NODE.DIAMETER / 2;
   const arcRadius = radius * 0.8;  // Size of the loop arc
-  const horizontalOffset = radius * 0.5 - 50;  // Translate connection points horizontally
+  const horizontalOffset = radius * 0.5 - 47;  // Translate connection points horizontally
+  const gap = 5;  // Small gap between edge and node
   
   // Determine if this is the second loop (should be below)
   const isSecondLoop = id.endsWith('self-2');
@@ -46,12 +52,12 @@ export default function LoopEdge({
   const entryAngle = isSecondLoop ? Math.PI * 2/3 : -Math.PI * 2/3;  // 120 degrees
   
   // Add horizontal offset to connection points
-  const exitX = sourceX + radius * Math.cos(exitAngle) + horizontalOffset;
-  const exitY = sourceY + radius * Math.sin(exitAngle);
-  const entryX = sourceX + radius * Math.cos(entryAngle) + horizontalOffset;
-  const entryY = sourceY + radius * Math.sin(entryAngle);
+  const exitX = sourceX + (radius + gap) * Math.cos(exitAngle) + horizontalOffset;
+  const exitY = sourceY + (radius + gap) * Math.sin(exitAngle);
+  const entryX = sourceX + (radius + gap) * Math.cos(entryAngle) + horizontalOffset;
+  const entryY = sourceY + (radius + gap) * Math.sin(entryAngle);
   
-  // Create circular arc path
+  // Create path between circumference points
   const path = `
     M ${exitX} ${exitY}
     A ${arcRadius} ${arcRadius} 0 1 ${isSecondLoop ? 1 : 0} ${entryX} ${entryY}
@@ -66,33 +72,57 @@ export default function LoopEdge({
   return (
     <>
       <BaseEdge 
-        id={id} 
-        path={path} 
+        path={path}
         style={{
           ...style,
           strokeWidth: 2,
-          stroke: '#000',
-        }} 
-        markerEnd={markerEnd} 
+          cursor: 'help',  // Show help cursor on hover
+        }}
+        markerEnd={markerEnd}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
       />
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: "absolute",
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: "all",
-            fontSize: "16px",
-            textAlign: "center",
-            width: "max-content",
-          }}
-        >
-          {label?.split("\\n").map((line, i) => (
-            <div key={i}>
-              <Latex>{"$" + line + "$"}</Latex>
-            </div>
-          ))}
-        </div>
-      </EdgeLabelRenderer>
+      {label && (
+        <EdgeLabelRenderer>
+          <div
+            style={{
+              position: "absolute",
+              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+              pointerEvents: "all",
+              fontSize: "16px",
+              textAlign: "center",
+              width: "max-content",
+              background: "transparent",
+              padding: "2px 6px",
+              borderRadius: "4px",
+            }}
+          >
+            {label.split("\\n").map((line, i) => (
+              <div key={i}>
+                <Latex>{"$" + line + "$"}</Latex>
+              </div>
+            ))}
+          </div>
+        </EdgeLabelRenderer>
+      )}
+      {showTooltip && (
+        <EdgeLabelRenderer>
+          <div
+            style={{
+              position: "absolute",
+              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY - 30}px)`,
+              background: "rgba(0, 0, 0, 0.8)",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              pointerEvents: "none",
+            }}
+          >
+            {tooltip}
+          </div>
+        </EdgeLabelRenderer>
+      )}
     </>
   );
 }

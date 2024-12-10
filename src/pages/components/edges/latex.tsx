@@ -65,8 +65,8 @@ export default function LatexEdge({
               fontSize: "12px",
               textAlign: "center",
               width: "max-content",
-              background: "white",
-              padding: "2px 4px",
+              background: "transparent",
+              padding: "2px 6px",
               borderRadius: "4px",
             }}
           >

@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AnimationState, getActiveNodesAtTime, redTaskTimings } from "./data/animation";
 import { Container } from "./components/container";
 import { LAYOUT, ANIMATION_CONFIG, STYLES, TASK_DESCRIPTIONS, TASK_STATES } from '~/config';
+import { SymbolKey } from "./components/symbol-key";
 
 type GraphType = {
   level: 1 | 2 | 3;
@@ -394,6 +395,7 @@ function FlowComponent() {
         >
           <Background />
           <Controls />
+          <SymbolKey />
 
           {/* Level 1 Containers */}
           {(!isAnimating || getContainerVisibility(1, undefined, STYLES.COLORS.RED)) && (

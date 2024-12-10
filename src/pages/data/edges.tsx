@@ -126,7 +126,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "1 Second",
+    label: "a^{(r)}_{1} \\land v_L",
   },
   {
     id: "e-grasp-deliver-1",
@@ -139,7 +139,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "1 Second",
+    label: "(g^{(r)}_{1} \\land v_L)",
   },
   {
     id: "e-deliver-grasp2-1",
@@ -152,7 +152,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "1 Second",
+    label: "(t^{(r)}_{1} \\land g_c)",
   },
   {
     id: "e-grasp2-block-1",
@@ -165,20 +165,21 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "1 Second",
+    label: "(r^{(r)}_{1} \\land v_L)",
   },
   {
     id: "e-above-red-1-self-1",
     source: "above-red-1",
     target: "above-red-1",
     type: "loop",
+    tooltip: "Guard condition: Not above red block 1 and not lifting",
     markerEnd: {
       type: MarkerType.ArrowClosed,
       color: "#000000",
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot (a^{(r)}_{1} \\land v_L)",
   },
   {
     id: "e-above-red-1-self-2",
@@ -191,7 +192,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot a_o",
   },
   {
     id: "e-grasp-red-1-self-1",
@@ -204,7 +205,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot (g^{(r)}_{1} \\land v_L)",
   },
   {
     id: "e-grasp-red-1-self-2",
@@ -217,7 +218,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot a_o",
   },
   {
     id: "e-deliver-red-1-self-1",
@@ -230,7 +231,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot (t^{(r)}_{1} \\land g_c)",
   },
   {
     id: "e-deliver-red-1-self-2",
@@ -243,7 +244,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot a_c",
   },
   {
     id: "e-grasp-red-two-1-self-1",
@@ -256,7 +257,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot (r^{(r)}_{1} \\land v_L)",
   },
   {
     id: "e-grasp-red-two-1-self-2",
@@ -269,7 +270,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot a_c",
   },
   {
     id: "e-block-red-1-self-1",
@@ -282,7 +283,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot (r^{(r)}_{1} \\land v_L)",
   },
   {
     id: "e-block-red-1-self-2",
@@ -295,7 +296,7 @@ export const graph3FirstEdges = [
       width: 15,
       height: 15,
     },
-    label: "0.5s",
+    label: "\\lnot a_o",
   },
 ];
 

@@ -171,9 +171,9 @@ export const LAYOUT = {
       zoom: 0.3
     },
     INITIAL: {
-      x: -1000,
-      y: 600,
-      zoom: 0.35
+      x: 1300,
+      y: -700,
+      zoom: 0.9
     }
   },
   
