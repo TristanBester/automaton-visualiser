@@ -17,6 +17,7 @@ import { AnimationState, getActiveNodesAtTime, redTaskTimings } from "./data/ani
 import { Container } from "./components/container";
 import { LAYOUT, ANIMATION_CONFIG, STYLES, TASK_DESCRIPTIONS, TASK_STATES } from '~/config';
 import { SymbolKey } from "./components/symbol-key";
+import { ProgressGraph } from "./components/progress-graph";
 
 type GraphType = {
   level: 1 | 2 | 3;
@@ -332,6 +333,9 @@ function FlowComponent() {
     return TASK_DESCRIPTIONS[activeTask] || TASK_STATES.DEFAULT;
   };
 
+  // Calculate progress percentage
+  const progress = (animationState.timeElapsed / (ANIMATION_CONFIG.DURATION.TOTAL / 1000)) * 100;
+
   return (
     <AnimatePresence mode="wait">
       <motion.div style={{ height: "100%", position: "relative" }}>
@@ -396,6 +400,7 @@ function FlowComponent() {
           <Background />
           <Controls />
           <SymbolKey />
+          {isAnimating && <ProgressGraph progress={progress} />}
 
           {/* Level 1 Containers */}
           {(!isAnimating || getContainerVisibility(1, undefined, STYLES.COLORS.RED)) && (

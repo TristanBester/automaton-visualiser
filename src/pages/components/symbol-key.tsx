@@ -15,7 +15,7 @@ const symbols = [
 
 export function SymbolKey() {
   return (
-    <div className="absolute right-4 top-20 z-10 rounded-lg bg-white/90 p-4 shadow-lg">
+    <div className="absolute left-4 top-24 z-10 rounded-lg bg-white/90 p-4 shadow-lg">
       <h3 className="mb-2 font-semibold">Symbol Key</h3>
       <div className="flex flex-col gap-y-1 text-sm">
         {symbols.map(({ symbol, description }) => (
