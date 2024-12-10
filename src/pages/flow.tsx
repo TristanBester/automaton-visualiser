@@ -91,6 +91,26 @@ function FlowComponent() {
     requestAnimationFrame(animate);
   };
 
+  const getNodeVisibility = (nodeId: string) => {
+    if (!isAnimating) return true;
+
+    // Graph 1 is always visible during animation
+    if (nodeId === "pack-red") return true;
+
+    // For Graph 2 - always show all nodes in Graph 2
+    if (nodeId.startsWith("pack-red-block")) return true;
+
+    // For Graph 3
+    const nodeNumber = nodeId.split("-").pop();
+    const currentBlock = animationState.graph2Active?.split("-").pop();
+    const isInActiveGroup = 
+      (currentBlock === "one" && nodeNumber === "1") ||
+      (currentBlock === "two" && nodeNumber === "2") ||
+      (currentBlock === "three" && nodeNumber === "3");
+
+    return isInActiveGroup;
+  };
+
   const getNodeStyle = (nodeId: string) => {
     if (!isAnimating) {
       return {
@@ -99,35 +119,22 @@ function FlowComponent() {
       };
     }
 
-    // For Graph 1
-    if (nodeId === "pack-red") {
-      return {
-        backgroundColor: '#FFEB3B',
-        opacity: 1,
-      };
-    }
+    const isActive = 
+      nodeId === animationState.graph1Active ||
+      nodeId === animationState.graph2Active ||
+      nodeId === animationState.graph3Active;
 
-    // For Graph 2
+    // For Graph 2, reduce opacity of inactive nodes but keep them visible
     if (nodeId.startsWith("pack-red-block")) {
-      const isActive = nodeId === animationState.graph2Active;
       return {
         backgroundColor: isActive ? '#FFEB3B' : '#E0E0E0',
         opacity: isActive ? 1 : 0.6,
       };
     }
 
-    // For Graph 3
-    const isActive = nodeId === animationState.graph3Active;
-    const currentBlock = animationState.graph2Active?.split("-").pop();
-    const nodeNumber = nodeId.split("-").pop();
-    const isInActiveGroup = 
-      (currentBlock === "one" && nodeNumber === "1") ||
-      (currentBlock === "two" && nodeNumber === "2") ||
-      (currentBlock === "three" && nodeNumber === "3");
-
     return {
       backgroundColor: isActive ? '#FFEB3B' : '#E0E0E0',
-      opacity: isInActiveGroup ? (isActive ? 1 : 0.6) : 0.3,
+      opacity: isActive ? 1 : 0.6,
     };
   };
 
@@ -151,13 +158,14 @@ function FlowComponent() {
     ]);
   }, []); // Only run once at mount
 
-  // Update node styles during animation
+  // Update node styles and visibility during animation
   useEffect(() => {
     if (!nodes.length) return;
     
     setNodes(nodes => 
       nodes.map(node => ({
         ...node,
+        hidden: !getNodeVisibility(node.id),
         data: {
           ...node.data,
           style: getNodeStyle(node.id),
@@ -196,6 +204,15 @@ function FlowComponent() {
     return false;
   };
 
+  // Initialize viewport once at mount
+  useEffect(() => {
+    setViewport({
+      x: -400,
+      y: -100,
+      zoom: 0.35
+    }, { duration: 0 });
+  }, []); // Empty dependency array means run once at mount
+
   return (
     <AnimatePresence mode="wait">
       <motion.div style={{ height: "100%", position: "relative" }}>
@@ -227,8 +244,6 @@ function FlowComponent() {
           fitView={false}
           minZoom={0.1}
           maxZoom={1.5}
-          defaultPosition={[-400, -100]}
-          defaultZoom={0.35}
           zoomOnScroll={true}
           panOnScroll={true}
           nodesDraggable={false}
@@ -244,8 +259,8 @@ function FlowComponent() {
 
           {(!isAnimating || getContainerVisibility(1)) && (
             <Container
-              x={1200}
-              y={-50}
+              x={1225}
+              y={-20}
               width={200}
               height={100}
               label="Pack Red Blocks (15s)"
@@ -266,7 +281,7 @@ function FlowComponent() {
             <Container
               x={50}
               y={350}
-              width={700}
+              width={750}
               height={150}
               label="Pack Red Block One (5s)"
             />
@@ -274,9 +289,9 @@ function FlowComponent() {
 
           {(!isAnimating || getContainerVisibility(3, "two")) && (
             <Container
-              x={850}
+              x={950}
               y={350}
-              width={700}
+              width={750}
               height={150}
               label="Pack Red Block Two (5s)"
             />
@@ -284,9 +299,9 @@ function FlowComponent() {
 
           {(!isAnimating || getContainerVisibility(3, "three")) && (
             <Container
-              x={1650}
+              x={1850}
               y={350}
-              width={700}
+              width={750}
               height={150}
               label="Pack Red Block Three (5s)"
             />
