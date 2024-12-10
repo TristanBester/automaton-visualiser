@@ -1,3 +1,5 @@
+import { Node } from '@xyflow/react';
+
 export type NodeData = {
   label: string;
   color?: string;
@@ -6,4 +8,4 @@ export type NodeData = {
     backgroundColor?: string;
   };
   onClick?: () => void;
-}; 
+} & Partial<Node>; 

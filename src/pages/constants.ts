@@ -1,0 +1,8 @@
+export const LAYOUT = {
+  BASE_X: 600,
+  BASE_Y: -20,
+  CONTAINER_WIDTH: 200,
+  CONTAINER_HEIGHT: 100,
+  CONTAINER_SPACING: 800,
+  GREEN_SHIFT: 2750
+} as const; 

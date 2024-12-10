@@ -16,6 +16,18 @@ export const graph1Edges = [
     },
     label: "15 Seconds",
   },
+  {
+    id: "e-pack-red-green",
+    source: "pack-red",
+    target: "pack-green",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+  },
 ];
 
 // Graph 2 edges
@@ -218,9 +230,9 @@ export const graph3ThirdEdges = [
 
 export const graph2GreenEdges = [
   {
-    id: "e-pack-green-one",
-    source: "pack-green-one-1",
-    target: "pack-green-one-2",
+    id: "e-green-block-1-2",
+    source: "pack-green-block-one",
+    target: "pack-green-block-two",
     type: "latex",
     markerEnd: {
       type: MarkerType.ArrowClosed,
@@ -228,7 +240,20 @@ export const graph2GreenEdges = [
       width: 15,
       height: 15,
     },
-    label: "next",
+    label: "5 Seconds",
+  },
+  {
+    id: "e-green-block-2-3",
+    source: "pack-green-block-two",
+    target: "pack-green-block-three",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "5 Seconds",
   },
 ];
 
@@ -251,3 +276,171 @@ export const graph2BlueEdges = [
 export const edgeTypes = {
   latex: LatexEdge,
 };
+
+// Graph 3 - Green First instance edges
+export const graph3GreenFirstEdges = [
+  {
+    id: "e-above-grasp-green-1",
+    source: "above-green-1",
+    target: "grasp-green-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp-deliver-green-1",
+    source: "grasp-green-1",
+    target: "deliver-green-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-deliver-grasp2-green-1",
+    source: "deliver-green-1",
+    target: "grasp-green-two-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp2-block-green-1",
+    source: "grasp-green-two-1",
+    target: "block-green-1",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+];
+
+// Graph 3 - Green Second instance edges
+export const graph3GreenSecondEdges = [
+  {
+    id: "e-above-grasp-green-2",
+    source: "above-green-2",
+    target: "grasp-green-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp-deliver-green-2",
+    source: "grasp-green-2",
+    target: "deliver-green-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-deliver-grasp2-green-2",
+    source: "deliver-green-2",
+    target: "grasp-green-two-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp2-block-green-2",
+    source: "grasp-green-two-2",
+    target: "block-green-2",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+];
+
+// Graph 3 - Green Third instance edges
+export const graph3GreenThirdEdges = [
+  {
+    id: "e-above-grasp-green-3",
+    source: "above-green-3",
+    target: "grasp-green-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp-deliver-green-3",
+    source: "grasp-green-3",
+    target: "deliver-green-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-deliver-grasp2-green-3",
+    source: "deliver-green-3",
+    target: "grasp-green-two-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+  {
+    id: "e-grasp2-block-green-3",
+    source: "grasp-green-two-3",
+    target: "block-green-3",
+    type: "latex",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "1 Second",
+  },
+];

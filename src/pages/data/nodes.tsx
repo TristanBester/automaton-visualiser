@@ -5,6 +5,7 @@ import {
   TerminalNode,
 } from "../components/nodes/basic";
 import { NodeData } from "../types";
+import { LAYOUT } from "../constants";
 
 export const initialNodes = [
   {
@@ -58,32 +59,44 @@ export const nodeTypes = {
   custom: CustomNode,
 };
 
+// Constants for layout
+const GRAPH3_Y = 400;
+const NODE_SPACING = 150;
+const GROUP_SPACING = 900;
+const GRAPH2_Y = 200;
+const BASE_X = 600;
+const GREEN_SHIFT = 2000; // New constant for green hierarchy shift
+
 // Graph 1 - Top level (single node)
 export const graph1Nodes = [
   {
     id: "pack-red",
     type: "internal",
-    position: { x: 1300, y: 0 },
+    position: { x: BASE_X + 700, y: 0 }, // Adjusted x position for two nodes
     data: { 
       label: "Pack Red\\nBlocks",
       color: "#ff9999",
       group: "red"
     } as NodeData,
   },
+  {
+    id: "pack-green",
+    type: "internal",
+    position: { x: BASE_X + 3450, y: 0 },
+    data: { 
+      label: "Pack Green\\nBlocks",
+      color: "#90EE90", // Light green color
+      group: "green"
+    } as NodeData,
+  },
 ];
 
-// Constants for layout
-const GRAPH3_Y = 400;
-const NODE_SPACING = 150; // Increased spacing between nodes
-const GROUP_SPACING = 900; // Spacing between groups in Graph 3
-const GRAPH2_Y = 200; // Y position for Graph 2 nodes
-
-// Graph 2 - Middle level (three sequential nodes)
+// Graph 2 nodes
 export const graph2Nodes = [
   {
     id: "pack-red-block-one",
     type: "internal",
-    position: { x: 300, y: GRAPH2_Y }, // Aligned with first Graph 3 group
+    position: { x: BASE_X, y: GRAPH2_Y },
     data: { 
       label: "Pack Red\\nBlock One",
       color: "#ff9999",
@@ -93,7 +106,7 @@ export const graph2Nodes = [
   {
     id: "pack-red-block-two",
     type: "internal",
-    position: { x: 1300, y: GRAPH2_Y }, // Aligned with second Graph 3 group
+    position: { x: BASE_X + 700, y: GRAPH2_Y },
     data: { 
       label: "Pack Red\\nBlock Two",
       color: "#ff9999",
@@ -103,11 +116,45 @@ export const graph2Nodes = [
   {
     id: "pack-red-block-three",
     type: "internal",
-    position: { x: 2300, y: GRAPH2_Y }, // Aligned with third Graph 3 group
+    position: { x: BASE_X + 1400, y: GRAPH2_Y },
     data: { 
       label: "Pack Red\\nBlock Three",
       color: "#ff9999",
       group: "red"
+    } as NodeData,
+  },
+];
+
+// Graph 2 nodes - Green path
+export const graph2GreenNodes = [
+  {
+    id: "pack-green-block-one",
+    type: "internal",
+    position: { x: BASE_X + LAYOUT.GREEN_SHIFT, y: GRAPH2_Y },
+    data: { 
+      label: "Pack Green\\nBlock One",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "pack-green-block-two",
+    type: "internal",
+    position: { x: BASE_X + LAYOUT.GREEN_SHIFT + 700, y: GRAPH2_Y },
+    data: { 
+      label: "Pack Green\\nBlock Two",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "pack-green-block-three",
+    type: "internal",
+    position: { x: BASE_X + LAYOUT.GREEN_SHIFT + 1400, y: GRAPH2_Y },
+    data: { 
+      label: "Pack Green\\nBlock Three",
+      color: "#90EE90",
+      group: "green"
     } as NodeData,
   },
 ];
@@ -270,6 +317,168 @@ export const graph3ThirdNodes = [
       label: "Block Red",
       color: "#ff9999",
       group: "red"
+    } as NodeData,
+  },
+];
+
+// Graph 3 - Green First instance
+export const graph3GreenFirstNodes = [
+  {
+    id: "above-green-1",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT, y: GRAPH3_Y },
+    data: { 
+      label: "Above Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "grasp-green-1",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + NODE_SPACING, y: GRAPH3_Y },
+    data: { 
+      label: "Grasp Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "deliver-green-1",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + NODE_SPACING * 2, y: GRAPH3_Y },
+    data: { 
+      label: "Deliver Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "grasp-green-two-1",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + NODE_SPACING * 3, y: GRAPH3_Y },
+    data: { 
+      label: "Grasp Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "block-green-1",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + NODE_SPACING * 4, y: GRAPH3_Y },
+    data: { 
+      label: "Block Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+];
+
+// Graph 3 - Green Second instance
+export const graph3GreenSecondNodes = [
+  {
+    id: "above-green-2",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING, y: GRAPH3_Y },
+    data: { 
+      label: "Above Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "grasp-green-2",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING + NODE_SPACING, y: GRAPH3_Y },
+    data: { 
+      label: "Grasp Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "deliver-green-2",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING + NODE_SPACING * 2, y: GRAPH3_Y },
+    data: { 
+      label: "Deliver Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "grasp-green-two-2",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING + NODE_SPACING * 3, y: GRAPH3_Y },
+    data: { 
+      label: "Grasp Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "block-green-2",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING + NODE_SPACING * 4, y: GRAPH3_Y },
+    data: { 
+      label: "Block Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+];
+
+// Graph 3 - Green Third instance
+export const graph3GreenThirdNodes = [
+  {
+    id: "above-green-3",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING * 2, y: GRAPH3_Y },
+    data: { 
+      label: "Above Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "grasp-green-3",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING * 2 + NODE_SPACING, y: GRAPH3_Y },
+    data: { 
+      label: "Grasp Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "deliver-green-3",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING * 2 + NODE_SPACING * 2, y: GRAPH3_Y },
+    data: { 
+      label: "Deliver Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "grasp-green-two-3",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING * 2 + NODE_SPACING * 3, y: GRAPH3_Y },
+    data: { 
+      label: "Grasp Green",
+      color: "#90EE90",
+      group: "green"
+    } as NodeData,
+  },
+  {
+    id: "block-green-3",
+    type: "internal",
+    position: { x: 100 + LAYOUT.GREEN_SHIFT + GROUP_SPACING * 2 + NODE_SPACING * 4, y: GRAPH3_Y },
+    data: { 
+      label: "Block Green",
+      color: "#90EE90",
+      group: "green"
     } as NodeData,
   },
 ];

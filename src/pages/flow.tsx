@@ -6,14 +6,16 @@ import {
   useNodesState,
   useReactFlow,
   ReactFlowProvider,
+  NodeTypes,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { graph1Nodes, graph2Nodes, graph3FirstNodes, graph3SecondNodes, graph3ThirdNodes, nodeTypes } from "./data/nodes";
-import { graph1Edges, graph2Edges, graph3FirstEdges, graph3SecondEdges, graph3ThirdEdges, edgeTypes } from "./data/edges";
+import { graph1Nodes, graph2Nodes, graph2GreenNodes, graph3FirstNodes, graph3SecondNodes, graph3ThirdNodes, graph3GreenFirstNodes, graph3GreenSecondNodes, graph3GreenThirdNodes, nodeTypes } from "./data/nodes";
+import { graph1Edges, graph2Edges, graph2GreenEdges, graph3FirstEdges, graph3SecondEdges, graph3ThirdEdges, graph3GreenFirstEdges, graph3GreenSecondEdges, graph3GreenThirdEdges, edgeTypes } from "./data/edges";
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimationState, getActiveNodesAtTime, redTaskTimings } from "./data/animation";
 import { Container } from "./components/container";
+import { LAYOUT } from "./constants";
 
 type GraphType = {
   level: 1 | 2 | 3;
@@ -37,13 +39,13 @@ function FlowComponent() {
     if (graph.level === 2) {
       return {
         red: graph2Nodes,
-        green: graph2Nodes,
+        green: graph2GreenNodes,
         blue: graph2Nodes,
       }[graph.group];
     }
     return {
       red: graph3FirstNodes,
-      green: graph3SecondNodes,
+      green: graph3GreenFirstNodes,
       blue: graph3ThirdNodes,
     }[graph.group];
   };
@@ -53,13 +55,13 @@ function FlowComponent() {
     if (graph.level === 2) {
       return {
         red: graph2Edges,
-        green: graph2Edges,
+        green: graph2GreenEdges,
         blue: graph2Edges,
       }[graph.group];
     }
     return {
       red: graph3FirstEdges,
-      green: graph3SecondEdges,
+      green: graph3GreenFirstEdges,
       blue: graph3ThirdEdges,
     }[graph.group];
   };
@@ -143,18 +145,26 @@ function FlowComponent() {
     const allNodes = [
       ...graph1Nodes,
       ...graph2Nodes,
+      ...graph2GreenNodes,
       ...graph3FirstNodes,
       ...graph3SecondNodes,
       ...graph3ThirdNodes,
+      ...graph3GreenFirstNodes,
+      ...graph3GreenSecondNodes,
+      ...graph3GreenThirdNodes,
     ];
     setNodes(allNodes);
     
     setEdges([
       ...graph1Edges,
       ...graph2Edges,
+      ...graph2GreenEdges,
       ...graph3FirstEdges,
       ...graph3SecondEdges,
       ...graph3ThirdEdges,
+      ...graph3GreenFirstEdges,
+      ...graph3GreenSecondEdges,
+      ...graph3GreenThirdEdges,
     ]);
   }, []); // Only run once at mount
 
@@ -207,11 +217,14 @@ function FlowComponent() {
   // Initialize viewport once at mount
   useEffect(() => {
     setViewport({
-      x: -400,
-      y: -100,
-      zoom: 0.35
+      x: 100,
+      y: 300,
+      zoom: 0.5
     }, { duration: 0 });
-  }, []); // Empty dependency array means run once at mount
+  }, []);
+
+  // Fix nodeTypes type error
+  const customNodeTypes = nodeTypes as unknown as NodeTypes;
 
   return (
     <AnimatePresence mode="wait">
@@ -238,7 +251,7 @@ function FlowComponent() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          nodeTypes={nodeTypes}
+          nodeTypes={customNodeTypes}
           edgeTypes={edgeTypes as EdgeTypes}
           onNodesChange={onNodesChange}
           fitView={false}
@@ -257,26 +270,53 @@ function FlowComponent() {
           <Background />
           <Controls />
 
+          {/* Level 1 Containers */}
           {(!isAnimating || getContainerVisibility(1)) && (
-            <Container
-              x={1225}
-              y={-20}
-              width={200}
-              height={100}
-              label="Pack Red Blocks (15s)"
-            />
+            <>
+              <Container
+                x={LAYOUT.BASE_X + 630}
+                y={LAYOUT.BASE_Y}
+                width={LAYOUT.CONTAINER_WIDTH}
+                height={LAYOUT.CONTAINER_HEIGHT}
+                label="Pack Red Blocks (15s)"
+                color="#ff9999"
+              />
+              <Container
+                x={LAYOUT.BASE_X + 3380}
+                y={LAYOUT.BASE_Y}
+                width={LAYOUT.CONTAINER_WIDTH}
+                height={LAYOUT.CONTAINER_HEIGHT}
+                label="Pack Green Blocks"
+                color="#90EE90"
+              />
+            </>
           )}
 
+          {/* Level 2 Containers */}
           {(!isAnimating || getContainerVisibility(2)) && (
-            <Container
-              x={200}
-              y={150}
-              width={2300}
-              height={150}
-              label="Sequential Tasks (5s each)"
-            />
+            <>
+              {/* Red Graph Container */}
+              <Container
+                x={LAYOUT.BASE_X - 100}
+                y={150}
+                width={1800}
+                height={150}
+                label="Red Sequential Tasks (5s each)"
+                color="#ff9999"
+              />
+              {/* Green Graph Container */}
+              <Container
+                x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 100}
+                y={150}
+                width={1800}
+                height={150}
+                label="Green Sequential Tasks (5s each)"
+                color="#90EE90"
+              />
+            </>
           )}
 
+          {/* Level 3 Red Containers */}
           {(!isAnimating || getContainerVisibility(3, "one")) && (
             <Container
               x={50}
@@ -284,6 +324,7 @@ function FlowComponent() {
               width={750}
               height={150}
               label="Pack Red Block One (5s)"
+              color="#ff9999"
             />
           )}
 
@@ -294,6 +335,7 @@ function FlowComponent() {
               width={750}
               height={150}
               label="Pack Red Block Two (5s)"
+              color="#ff9999"
             />
           )}
 
@@ -304,6 +346,41 @@ function FlowComponent() {
               width={750}
               height={150}
               label="Pack Red Block Three (5s)"
+              color="#ff9999"
+            />
+          )}
+
+          {/* Level 3 Green Containers */}
+          {(!isAnimating || getContainerVisibility(3, "one")) && (
+            <Container
+              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT - 550}
+              y={350}
+              width={750}
+              height={150}
+              label="Pack Green Block One (5s)"
+              color="#90EE90"
+            />
+          )}
+
+          {(!isAnimating || getContainerVisibility(3, "two")) && (
+            <Container
+              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT + 350}
+              y={350}
+              width={750}
+              height={150}
+              label="Pack Green Block Two (5s)"
+              color="#90EE90"
+            />
+          )}
+
+          {(!isAnimating || getContainerVisibility(3, "three")) && (
+            <Container
+              x={LAYOUT.BASE_X + LAYOUT.GREEN_SHIFT + 1250}
+              y={350}
+              width={750}
+              height={150}
+              label="Pack Green Block Three (5s)"
+              color="#90EE90"
             />
           )}
         </ReactFlow>
