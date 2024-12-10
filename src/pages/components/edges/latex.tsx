@@ -6,6 +6,7 @@ import {
 } from "@xyflow/react";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
+import { LAYOUT } from "~/config";
 
 type LatexEdgeProps = {
   id: string;
@@ -28,16 +29,28 @@ export default function LatexEdge({
   markerEnd,
   label = "",
 }: LatexEdgeProps) {
-  const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    curvature: 0,
-  });
+  const radius = LAYOUT.NODE.DIAMETER / 2;
+  const gap = 5; // Small gap between edge and node
 
+  // Calculate angle between nodes
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+  const angle = Math.atan2(dy, dx);
+
+  // Find points on circumference of source and target nodes
+  const startX = sourceX + (radius + gap) * Math.cos(angle);
+  const startY = sourceY + (radius + gap) * Math.sin(angle);
+  const endX = targetX - (radius + gap) * Math.cos(angle);
+  const endY = targetY - (radius + gap) * Math.sin(angle);
+
+  // Calculate label position
+  const labelX = (startX + endX) / 2;
+  const labelY = (startY + endY) / 2;
   const isDownwardEdge = targetY > sourceY;
   const labelOffset = isDownwardEdge ? -20 : -40;
+
+  // Create straight path between circumference points
+  const edgePath = `M ${startX} ${startY} L ${endX} ${endY}`;
 
   return (
     <>

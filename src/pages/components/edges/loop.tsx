@@ -36,6 +36,7 @@ export default function LoopEdge({
 }: LoopEdgeProps) {
   const radius = LAYOUT.NODE.DIAMETER / 2;
   const arcRadius = radius * 0.8;  // Size of the loop arc
+  const horizontalOffset = radius * 0.5 - 50;  // Translate connection points horizontally
   
   // Determine if this is the second loop (should be below)
   const isSecondLoop = id.endsWith('self-2');
@@ -44,9 +45,10 @@ export default function LoopEdge({
   const exitAngle = isSecondLoop ? Math.PI / 3 : -Math.PI / 3;  // 60 degrees
   const entryAngle = isSecondLoop ? Math.PI * 2/3 : -Math.PI * 2/3;  // 120 degrees
   
-  const exitX = sourceX + radius * Math.cos(exitAngle);
+  // Add horizontal offset to connection points
+  const exitX = sourceX + radius * Math.cos(exitAngle) + horizontalOffset;
   const exitY = sourceY + radius * Math.sin(exitAngle);
-  const entryX = sourceX + radius * Math.cos(entryAngle);
+  const entryX = sourceX + radius * Math.cos(entryAngle) + horizontalOffset;
   const entryY = sourceY + radius * Math.sin(entryAngle);
   
   // Create circular arc path
@@ -55,10 +57,10 @@ export default function LoopEdge({
     A ${arcRadius} ${arcRadius} 0 1 ${isSecondLoop ? 1 : 0} ${entryX} ${entryY}
   `;
 
-  // Position label next to the arc
+  // Position label next to the arc (also offset)
   const labelAngle = (exitAngle + entryAngle) / 2;
   const labelDistance = radius * 1.5;
-  const labelX = sourceX + labelDistance * Math.cos(labelAngle);
+  const labelX = sourceX + labelDistance * Math.cos(labelAngle) + horizontalOffset;
   const labelY = sourceY + labelDistance * Math.sin(labelAngle);
 
   return (
