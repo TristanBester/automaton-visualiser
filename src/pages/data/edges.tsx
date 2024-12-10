@@ -2,7 +2,8 @@ import { MarkerType } from "@xyflow/react";
 import LatexEdge from "../components/edges/latex";
 import LoopEdge from "../components/edges/loop";
 
-export const edges = [
+// Original graph edges
+export const initialEdges = [
   // Self-loop on u0
   {
     id: "e-u0-u0-1",
@@ -75,6 +76,24 @@ export const edges = [
     },
     label: "\\langle p_B, [1], [0], 0\\rangle\\n\\langle \\tau, [0], [0], 0\\rangle",
   },
+];
+
+// Alternative graph edges
+export const alternativeEdges = [
+  {
+    id: "e-u3-u3",
+    source: "u3",
+    target: "u3",
+    type: "loop",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: "#000000",
+      width: 15,
+      height: 15,
+    },
+    label: "\\langle p_C, [1], [-1], 0\\rangle",
+    animated: true,
+  }
 ];
 
 export const edgeTypes = {

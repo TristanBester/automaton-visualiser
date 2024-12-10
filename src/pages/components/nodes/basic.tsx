@@ -22,18 +22,25 @@ export function CustomNode(props: NodeProps) {
 
 export function InternalNode({ data }: NodeProps) {
   return (
-    <>
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div
         className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 shadow-md transition-colors duration-500`}
         style={{ 
           backgroundColor: data.color || '#f3f4f6',
+          cursor: 'pointer'
         }}
+        onClick={data.onClick}
       >
         <Latex>{`$${data.label}$`}</Latex>
       </div>
       <Handle type="source" position={Position.Right} id="a" />
       <Handle type="target" position={Position.Left} />
-    </>
+    </motion.div>
   );
 }
 

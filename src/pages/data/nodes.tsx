@@ -5,6 +5,12 @@ import {
   TerminalNode,
 } from "../components/nodes/basic";
 
+export type NodeData = {
+  label: string;
+  color?: string;
+  onClick?: () => void;
+}
+
 export const initialNodes = [
   {
     id: "u0",
@@ -12,8 +18,8 @@ export const initialNodes = [
     position: { x: 300, y: 150 },
     data: { 
       label: "u_0",
-      color: "#ff0000", // Initial red color
-    },
+      color: "#ff0000",
+    } as NodeData,
   },
   {
     id: "u1",
@@ -21,8 +27,8 @@ export const initialNodes = [
     position: { x: 700, y: 150 },
     data: { 
       label: "u_1",
-      color: "#0000ff", // Initial blue color
-    },
+      color: "#0000ff",
+    } as NodeData,
   },
   {
     id: "t1",
@@ -35,6 +41,18 @@ export const initialNodes = [
     type: "terminal",
     position: { x: 700, y: 350 },
     data: { label: "" },
+  }
+];
+
+export const alternativeNodes = [
+  {
+    id: "u3",
+    type: "internal",
+    position: { x: 400, y: 200 },
+    data: { 
+      label: "u_3",
+      color: "#ff0000",
+    } as NodeData,
   }
 ];
 
