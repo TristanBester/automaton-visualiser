@@ -7,36 +7,35 @@ import {
 
 export const initialNodes = [
   {
-    id: "1",
-    type: "custom",
-    position: { x: 0, y: 0 },
-    data: {
-      label: "Hello",
-      isOpen: false,
-      variants: {
-        start: { backgroundColor: "#FF0000" },
-        end: { backgroundColor: "#00FF00" },
-      },
+    id: "u0",
+    type: "internal",
+    position: { x: 300, y: 150 },
+    data: { 
+      label: "u_0",
+      color: "#ff0000", // Initial red color
     },
   },
   {
-    id: "2",
-    type: "animated",
-    position: { x: 200, y: 0 },
-    data: { label: "Hello", isOpen: false },
+    id: "u1",
+    type: "internal", 
+    position: { x: 700, y: 150 },
+    data: { 
+      label: "u_1",
+      color: "#0000ff", // Initial blue color
+    },
   },
   {
-    id: "3",
-    type: "internal",
-    position: { x: 400, y: 0 },
-    data: { label: "Hello", isOpen: false },
-  },
-  {
-    id: "4",
+    id: "t1",
     type: "terminal",
-    position: { x: 400, y: 200 },
-    data: { label: "Hello", isOpen: false },
+    position: { x: 300, y: 350 },
+    data: { label: "" },
   },
+  {
+    id: "t2", 
+    type: "terminal",
+    position: { x: 700, y: 350 },
+    data: { label: "" },
+  }
 ];
 
 export const nodeTypes = {

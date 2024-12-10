@@ -8,50 +8,36 @@ import {
 import "@xyflow/react/dist/style.css";
 import { initialNodes, nodeTypes } from "./data/nodes";
 import { edges, edgeTypes } from "./data/edges";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 function Flow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [isInitialState, setIsInitialState] = useState(true);
+  const [isFirstState, setIsFirstState] = useState(true);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes.map(node => ({
+    ...node,
+    data: {
+      ...node.data,
+      color: node.id === "u0" ? "#ff0000" : "#0000ff", // Initial colors
+    }
+  })));
 
   useEffect(() => {
-    setTimeout(() => {
-      console.log("doing the thing");
-      // @ts-ignore
-      setNodes((prev) => {
-        return prev.map((node) => {
-          if (node.id === "1") {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                isOpen: !node.data.isOpen,
-              },
-            };
+    const interval = setInterval(() => {
+      setIsFirstState(prev => !prev);
+      setNodes(nds => 
+        nds.map(node => ({
+          ...node,
+          data: {
+            ...node.data,
+            color: node.id === "u0" 
+              ? (isFirstState ? "#0000ff" : "#ff0000")  // u0: red -> blue
+              : (isFirstState ? "#ff0000" : "#0000ff")  // u1: blue -> red
           }
-          return node;
-        });
-      });
-    }, 3000);
-  }, []);
+        }))
+      );
+    }, 5000); // 5 seconds interval
 
-  const handleChange = () => {
-    // @ts-ignore
-    setNodes((prev) => {
-      return prev.map((node) => {
-        if (node.id === "1") {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              isOpen: !node.data.isOpen,
-            },
-          };
-        }
-        return node;
-      });
-    });
-  };
+    return () => clearInterval(interval);
+  }, [isFirstState, setNodes]);
 
   return (
     <div style={{ height: "100%" }}>
@@ -60,11 +46,9 @@ function Flow() {
         edges={edges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes as EdgeTypes}
+        onNodesChange={onNodesChange}
       >
         <Background />
-        <button className="absolute left-0 top-0 z-10" onClick={handleChange}>
-          Log nodes
-        </button>
       </ReactFlow>
     </div>
   );

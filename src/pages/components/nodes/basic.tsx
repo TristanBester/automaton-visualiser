@@ -20,13 +20,16 @@ export function CustomNode(props: NodeProps) {
   );
 }
 
-export function InternalNode() {
+export function InternalNode({ data }: NodeProps) {
   return (
     <>
       <div
-        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 bg-gray-100 shadow-md`}
+        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 shadow-md transition-colors duration-500`}
+        style={{ 
+          backgroundColor: data.color || '#f3f4f6',
+        }}
       >
-        <Latex>$u_0$</Latex>
+        <Latex>{`$${data.label}$`}</Latex>
       </div>
       <Handle type="source" position={Position.Right} id="a" />
       <Handle type="target" position={Position.Left} />

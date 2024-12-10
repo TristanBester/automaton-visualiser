@@ -18,6 +18,7 @@ type LoopEdgeProps = {
   targetPosition: any;
   style: React.CSSProperties;
   markerEnd: string;
+  label?: string;
 };
 
 export default function LoopEdge({
@@ -30,23 +31,22 @@ export default function LoopEdge({
   targetPosition,
   style = {},
   markerEnd,
+  label
 }: LoopEdgeProps) {
-  const offset = 40; // adjust this value to make the loop larger or smaller
+  const offset = 50;
+  const controlOffset = 80;
 
-  // Define the control points for the Bezier curve to make it circular
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY: sourceY - offset,
-    sourcePosition,
-    targetX,
-    targetY: targetY - offset,
-    targetPosition,
-    curvature: 3,
-  });
+  // Calculate control points for a more circular loop
+  const controlX = sourceX - controlOffset;
+  const controlY = sourceY - controlOffset;
 
-  const path = generateParabolaCurve(sourceX, sourceY, targetX, targetY);
-  const labelX = (sourceX + targetX) / 2;
-  const labelY = (sourceY + targetY) / 2 - 60;
+  const path = `M ${sourceX} ${sourceY} 
+                C ${controlX} ${controlY},
+                  ${controlX} ${controlY},
+                  ${sourceX} ${sourceY}`;
+
+  const labelX = sourceX - controlOffset;
+  const labelY = sourceY - controlOffset - 10;
 
   return (
     <>
@@ -55,12 +55,21 @@ export default function LoopEdge({
         <div
           style={{
             position: "absolute",
-            transform: `translate(-50%, -150%) translate(${labelX}px,${labelY}px)`,
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             pointerEvents: "all",
             fontSize: "12px",
+            textAlign: "center",
+            width: "max-content",
+            background: "white",
+            padding: "2px 4px",
+            borderRadius: "4px",
           }}
         >
-          <Latex>$\alpha$</Latex>
+          {label?.split("\\n").map((line, i) => (
+            <div key={i}>
+              <Latex>{"$" + line + "$"}</Latex>
+            </div>
+          ))}
         </div>
       </EdgeLabelRenderer>
     </>

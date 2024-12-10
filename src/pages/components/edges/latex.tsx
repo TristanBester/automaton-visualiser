@@ -33,10 +33,11 @@ export default function LatexEdge({
     sourceY,
     targetX,
     targetY,
+    curvature: 0,
   });
 
-  const info = "Hello";
-  console.log(id, sourceX, sourceY, targetX, targetY, label);
+  const isDownwardEdge = targetY > sourceY;
+  const labelOffset = isDownwardEdge ? -20 : -40;
 
   return (
     <>
@@ -45,12 +46,21 @@ export default function LatexEdge({
         <div
           style={{
             position: "absolute",
-            transform: `translate(-50%, -150%) translate(${labelX}px,${labelY}px)`,
+            transform: `translate(-50%, ${labelOffset}px) translate(${labelX}px,${labelY}px)`,
             pointerEvents: "all",
             fontSize: "12px",
+            textAlign: "center",
+            width: "max-content",
+            background: "white",
+            padding: "2px 4px",
+            borderRadius: "4px",
           }}
         >
-          <Latex>{label}</Latex>
+          {label.split("\\n").map((line, i) => (
+            <div key={i}>
+              <Latex>{"$" + line + "$"}</Latex>
+            </div>
+          ))}
         </div>
       </EdgeLabelRenderer>
     </>
