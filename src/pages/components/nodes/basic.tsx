@@ -5,6 +5,8 @@ import Latex from "react-latex-next";
 import { cn } from "~/utils";
 import { motion } from "framer-motion";
 import { NodeData } from "~/pages/types";
+import { LAYOUT } from "~/config";
+import { STYLES } from "~/config/styles";
 
 export function CustomNode(props: NodeProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +24,7 @@ export function CustomNode(props: NodeProps) {
 }
 
 export function InternalNode({ data }: NodeProps<NodeData>) {
-  const isActive = data?.style?.backgroundColor === '#FFEB3B';
+  const isActive = data?.style?.backgroundColor === STYLES.NODES.ACTIVE.backgroundColor;
 
   return (
     <motion.div
@@ -33,23 +35,17 @@ export function InternalNode({ data }: NodeProps<NodeData>) {
       style={{ position: 'relative' }}
     >
       <div
-        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 shadow-md transition-all duration-300`}
-        style={{ 
-          backgroundColor: data?.style?.backgroundColor || data?.color || '#f3f4f6',
-          cursor: 'pointer',
-          transform: isActive ? 'scale(1.5)' : 'scale(1)',
-          boxShadow: isActive 
-            ? '0 0 25px rgba(255, 235, 59, 0.8), 0 0 50px rgba(255, 235, 59, 0.4)' 
-            : '0 0 10px rgba(0, 0, 0, 0.2)',
-          zIndex: isActive ? 10 : 1,
-          transition: 'all 0.3s ease-in-out',
-          animation: isActive ? 'pulse 2s infinite' : 'none',
+        style={{
+          width: LAYOUT.NODE.DIAMETER,
+          height: LAYOUT.NODE.DIAMETER,
+          ...LAYOUT.NODE.STYLE,
+          ...data?.style,
+          ...(isActive ? LAYOUT.NODE.ACTIVE : {}),
         }}
-        onClick={data?.onClick}
       >
-        <Latex>{`$${data?.label}$`}</Latex>
+        <Latex>{"$" + data?.label + "$"}</Latex>
       </div>
-      <Handle type="source" position={Position.Right} id="a" />
+      <Handle type="source" position={Position.Right} />
       <Handle type="target" position={Position.Left} />
     </motion.div>
   );

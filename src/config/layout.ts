@@ -202,4 +202,24 @@ export const LAYOUT = {
       Y: 200
     }
   },
+  
+  NODE: {
+    DIAMETER: 150,
+    STYLE: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50%',
+      border: '1px solid #ccc',
+      fontSize: '16px',
+      backgroundColor: '#f3f4f6',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+      transition: 'all 0.3s ease-in-out',
+    },
+    ACTIVE: {
+      transform: 'scale(1.2)',
+      boxShadow: '0 0 25px rgba(255, 235, 59, 0.8), 0 0 50px rgba(255, 235, 59, 0.4)',
+      zIndex: 10,
+    }
+  },
 } as const; 

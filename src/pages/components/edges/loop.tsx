@@ -7,6 +7,7 @@ import {
 } from "@xyflow/react";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
+import { LAYOUT } from "~/config";
 
 type LoopEdgeProps = {
   id: string;
@@ -33,39 +34,32 @@ export default function LoopEdge({
   markerEnd,
   label
 }: LoopEdgeProps) {
-  const radius = 40;
+  const radius = LAYOUT.NODE.DIAMETER / 2;
+  const arcRadius = radius * 0.8;  // Size of the loop arc
   
   // Determine if this is the second loop (should be below)
   const isSecondLoop = id.endsWith('self-2');
   
-  // Create path either above or below the node
-  const path = isSecondLoop ? 
-    // Below loop
-    `
-      M ${sourceX} ${sourceY}
-      C ${sourceX + radius} ${sourceY + radius},
-        ${sourceX + radius} ${sourceY + radius * 2},
-        ${sourceX} ${sourceY + radius * 2}
-      C ${sourceX - radius} ${sourceY + radius * 2},
-        ${sourceX - radius} ${sourceY + radius},
-        ${sourceX} ${sourceY}
-    ` :
-    // Above loop
-    `
-      M ${sourceX} ${sourceY}
-      C ${sourceX + radius} ${sourceY - radius},
-        ${sourceX + radius} ${sourceY - radius * 2},
-        ${sourceX} ${sourceY - radius * 2}
-      C ${sourceX - radius} ${sourceY - radius * 2},
-        ${sourceX - radius} ${sourceY - radius},
-        ${sourceX} ${sourceY}
-    `;
+  // Calculate exit and entry points on the node circumference
+  const exitAngle = isSecondLoop ? Math.PI / 3 : -Math.PI / 3;  // 60 degrees
+  const entryAngle = isSecondLoop ? Math.PI * 2/3 : -Math.PI * 2/3;  // 120 degrees
+  
+  const exitX = sourceX + radius * Math.cos(exitAngle);
+  const exitY = sourceY + radius * Math.sin(exitAngle);
+  const entryX = sourceX + radius * Math.cos(entryAngle);
+  const entryY = sourceY + radius * Math.sin(entryAngle);
+  
+  // Create circular arc path
+  const path = `
+    M ${exitX} ${exitY}
+    A ${arcRadius} ${arcRadius} 0 1 ${isSecondLoop ? 1 : 0} ${entryX} ${entryY}
+  `;
 
-  // Position label above or below the loop
-  const labelX = sourceX;
-  const labelY = isSecondLoop ? 
-    sourceY + radius * 2 + 10 :  // Below loop
-    sourceY - radius * 2 - 10;   // Above loop
+  // Position label next to the arc
+  const labelAngle = (exitAngle + entryAngle) / 2;
+  const labelDistance = radius * 1.5;
+  const labelX = sourceX + labelDistance * Math.cos(labelAngle);
+  const labelY = sourceY + labelDistance * Math.sin(labelAngle);
 
   return (
     <>
@@ -85,12 +79,9 @@ export default function LoopEdge({
             position: "absolute",
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             pointerEvents: "all",
-            fontSize: "12px",
+            fontSize: "16px",
             textAlign: "center",
             width: "max-content",
-            background: "white",
-            padding: "2px 4px",
-            borderRadius: "4px",
           }}
         >
           {label?.split("\\n").map((line, i) => (
