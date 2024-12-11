@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Video {
   name: string;
@@ -11,22 +11,22 @@ interface VideoSelectorProps {
   videos: Video[];
 }
 
-const VideoSelector = ({ selectedVideo, onVideoChange, videos }: VideoSelectorProps) => {
+export const VideoSelector = ({
+  selectedVideo,
+  onVideoChange,
+  videos,
+}: VideoSelectorProps) => {
   return (
-    <div className="video-selector">
-      <select 
-        value={selectedVideo} 
-        onChange={(e) => onVideoChange(e.target.value)}
-        className="px-3 py-2 border rounded-md"
-      >
-        {videos.map((video, index) => (
-          <option key={index} value={video.path}>
-            {video.name}
-          </option>
-        ))}
-      </select>
-    </div>
+    <select
+      value={selectedVideo}
+      onChange={(e) => onVideoChange(e.target.value)}
+      className="rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      {videos.map((video) => (
+        <option key={video.path} value={video.path}>
+          {`Animation ${video.name}`}
+        </option>
+      ))}
+    </select>
   );
 };
-
-export default VideoSelector; 
