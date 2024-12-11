@@ -1,11 +1,10 @@
-import { Node } from '@xyflow/react';
+import { Node } from "@xyflow/react";
 
 export type NodeData = {
   label: string;
   color?: string;
+  style?: React.CSSProperties;
   group?: string;
-  style?: {
-    backgroundColor?: string;
-  };
-  onClick?: () => void;
-} & Partial<Node>; 
+};
+
+export type GraphId = "1-1-1" | "3-3-3";
