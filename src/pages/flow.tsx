@@ -27,7 +27,11 @@ import { edgeTypes } from "~/data/edge-types";
 import { nodeTypes } from "~/data/node-types";
 import { GraphId } from "~/pages/types";
 import { ProgressGraph } from "./components/progress-graph";
-import { type AnimationState } from "~/data/3-3-3/animation/animation";
+import { ABSTRACT_NODES } from "~/data/animations";
+import { AnimationSelector } from "./components/AnimationSelector";
+import { AnimationProvider } from "~/contexts/AnimationContext";
+import { useAnimationContext } from "~/contexts/AnimationContext";
+import { type AnimationState } from "~/pages/types";
 
 function FlowComponent() {
   const { setViewport } = useReactFlow();
@@ -99,6 +103,89 @@ function FlowComponent() {
     timeElapsed: 0,
     isGreenPhase: false,
   });
+
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const { activeAnimation, currentAnimation, setCurrentAnimation } =
+    useAnimationContext();
+
+  // Sync graph selection with animation selection
+  useEffect(() => {
+    setSelectedGraphId(currentAnimation as GraphId);
+  }, [currentAnimation]);
+
+  // Sync animation selection with graph selection
+  useEffect(() => {
+    setCurrentAnimation(selectedGraphId);
+  }, [selectedGraphId, setCurrentAnimation]);
+
+  // Reset animation state when animation changes
+  useEffect(() => {
+    if (isAnimating) {
+      stopAnimation();
+    }
+    setCurrentStepIndex(0);
+    updateNodeStates(null);
+  }, [currentAnimation]);
+
+  // Function to update node active states
+  const updateNodeStates = (activeNodeId: string | null) => {
+    setNodes((nds) =>
+      nds.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          isActive:
+            // Direct match
+            node.id === activeNodeId ||
+            // Parent node activation logic
+            (activeNodeId?.includes("pack-red-blocks") &&
+              node.id === ABSTRACT_NODES.RED) ||
+            (activeNodeId?.includes("pack-green-blocks") &&
+              node.id === ABSTRACT_NODES.GREEN) ||
+            (activeNodeId?.includes("pack-blue-blocks") &&
+              node.id === ABSTRACT_NODES.BLUE),
+        },
+      })),
+    );
+  };
+
+  // Update the animation step handler to use the current animation
+  const handleAnimationStep = async () => {
+    if (!isAnimating || !activeAnimation) return;
+
+    if (currentStepIndex >= activeAnimation.length) {
+      setIsAnimating(false);
+      updateNodeStates(null);
+      return;
+    }
+
+    const step = activeAnimation[currentStepIndex];
+    if (!step) return;
+
+    updateNodeStates(step.nodeId);
+    await new Promise((resolve) => setTimeout(resolve, step.duration));
+    setCurrentStepIndex((prev) => prev + 1);
+  };
+
+  // Animation effect
+  useEffect(() => {
+    if (isAnimating) {
+      handleAnimationStep();
+    }
+  }, [isAnimating, currentStepIndex]);
+
+  // Add animation controls
+  const startAnimation = () => {
+    if (!activeAnimation) return;
+    setCurrentStepIndex(0);
+    setIsAnimating(true);
+  };
+
+  const stopAnimation = () => {
+    setIsAnimating(false);
+    setCurrentStepIndex(0);
+    updateNodeStates(null);
+  };
 
   // Initialize viewport once at mount
   useEffect(() => {
@@ -196,10 +283,29 @@ function FlowComponent() {
         >
           <Background />
           <Controls />
+          <AnimationSelector />
         </ReactFlow>
 
         {/* Symbol key */}
         {showSymbolKey && <SymbolKey />}
+
+        {/* Add animation controls */}
+        <div style={{ position: "absolute", top: 10, right: 10, zIndex: 10 }}>
+          <button
+            onClick={startAnimation}
+            disabled={isAnimating}
+            className="mr-2 rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600 disabled:opacity-50"
+          >
+            Start Animation
+          </button>
+          <button
+            onClick={stopAnimation}
+            disabled={!isAnimating}
+            className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600 disabled:opacity-50"
+          >
+            Stop Animation
+          </button>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
@@ -208,7 +314,9 @@ function FlowComponent() {
 export default function Flow() {
   return (
     <ReactFlowProvider>
-      <FlowComponent />
+      <AnimationProvider>
+        <FlowComponent />
+      </AnimationProvider>
     </ReactFlowProvider>
   );
 }

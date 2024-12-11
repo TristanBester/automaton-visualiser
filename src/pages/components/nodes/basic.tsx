@@ -24,9 +24,6 @@ export function CustomNode({ data }: NodeProps<NodeData>) {
 }
 
 export function InternalNode({ data }: NodeProps<NodeData>) {
-  const isActive =
-    data?.style?.backgroundColor === STYLES.NODES.ACTIVE.backgroundColor;
-
   return (
     <motion.div
       initial={{ scale: 0 }}
@@ -44,7 +41,9 @@ export function InternalNode({ data }: NodeProps<NodeData>) {
           boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
           transition: "all 0.3s ease-in-out",
           ...data?.style,
-          ...(isActive ? LAYOUT.NODE.ACTIVE : {}),
+          backgroundColor: data?.isActive
+            ? STYLES.COLORS.YELLOW
+            : data?.style?.backgroundColor,
         }}
       >
         {data?.label}
@@ -72,6 +71,9 @@ export function DecisionNode({ data }: NodeProps<NodeData>) {
           ...data?.style,
           borderRadius: "0",
           transform: "rotate(45deg)",
+          backgroundColor: data?.isActive
+            ? STYLES.COLORS.PURPLE
+            : data?.style?.backgroundColor,
         }}
       >
         <div style={{ transform: "rotate(-45deg)" }}>{data?.label}</div>

@@ -1,7 +1,9 @@
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Latex from "react-latex-next";
+import { type NodeData } from "~/pages/types";
+import { useAnimationContext } from "~/contexts/AnimationContext";
 
 const variants = {
   open: { opacity: 1, x: 0, y: 0 },
@@ -12,13 +14,22 @@ const variants = {
   },
 };
 
-export function AnimatedNode() {
+export function AnimatedNode({ data, id }: NodeProps<NodeData>) {
   const [isOpen, setIsOpen] = useState(false);
+  const { currentAnimation } = useAnimationContext();
+  const isActive = data.isActive;
+
+  // Reset animation state when animation changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [currentAnimation]);
 
   return (
     <>
       <motion.div
-        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 bg-gray-100 shadow-md`}
+        className={`flex h-16 w-16 items-center justify-center rounded-full border border-gray-300 ${
+          isActive ? "bg-blue-200" : "bg-gray-100"
+        } shadow-md`}
         animate={isOpen ? "open" : "closed"}
         transition={{ duration: 3, times: [0, 0.1, 0.2, 1.0] }}
         variants={variants}

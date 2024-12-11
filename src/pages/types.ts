@@ -1,12 +1,17 @@
-import { Node } from "@xyflow/react";
+import { type Node } from "@xyflow/react";
 
-export interface NodeData {
+export type NodeData = {
   label: string;
-  color?: string;
+  isActive?: boolean;
   style?: React.CSSProperties;
-  group?: string;
-  isOpen?: boolean;
-  variants?: any;
-}
+} & Partial<Node>;
 
 export type GraphId = "1-1-1" | "3-3-3";
+
+export type AnimationState = {
+  graph1Active: string | null;
+  graph2Active: string | null;
+  graph3Active: string | null;
+  timeElapsed: number;
+  isGreenPhase: boolean;
+};
