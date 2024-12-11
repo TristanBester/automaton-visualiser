@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Latex from "react-latex-next";
 
 const symbols = [
@@ -14,20 +15,35 @@ const symbols = [
 ];
 
 export function SymbolKey() {
+  const [isExpanded, setIsExpanded] = useState(true);
+
   return (
-    <div className="absolute left-4 top-24 z-10 rounded-lg bg-white/90 p-4 shadow-lg">
-      <h3 className="mb-2 font-semibold">Symbol Key</h3>
-      <div className="flex flex-col gap-y-1 text-sm">
-        {symbols.map(({ symbol, description }) => (
-          <div key={symbol} className="flex items-center gap-2">
-            <div className="min-w-[60px]">
-              <Latex>{"$" + symbol + "$"}</Latex>
-            </div>
-            <span className="text-gray-600">-</span>
-            <span>{description}</span>
+    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000] bg-white rounded-lg shadow-lg w-[90%] max-w-6xl">
+      <button 
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full px-4 py-2 text-left font-semibold flex justify-between items-center hover:bg-gray-50 rounded-t-lg"
+      >
+        <span>Symbol Key</span>
+        <span className="text-gray-500">
+          {isExpanded ? '▼' : '▶'}
+        </span>
+      </button>
+      
+      {isExpanded && (
+        <div className="p-4 pt-2">
+          <div className="grid grid-cols-5 gap-4 text-sm">
+            {symbols.map(({ symbol, description }) => (
+              <div key={symbol} className="flex items-center gap-2">
+                <div className="min-w-[60px]">
+                  <Latex>{"$" + symbol + "$"}</Latex>
+                </div>
+                <span className="text-gray-600">-</span>
+                <span>{description}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 } 

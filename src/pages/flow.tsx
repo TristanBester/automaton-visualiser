@@ -11,13 +11,15 @@ import {
 import "@xyflow/react/dist/style.css";
 import { graph1Nodes, graph2Nodes, graph2GreenNodes, graph3FirstNodes, graph3SecondNodes, graph3ThirdNodes, graph3GreenFirstNodes, graph3GreenSecondNodes, graph3GreenThirdNodes, nodeTypes } from "./data/nodes";
 import { graph1Edges, graph2Edges, graph2GreenEdges, graph3FirstEdges, graph3SecondEdges, graph3ThirdEdges, graph3GreenFirstEdges, graph3GreenSecondEdges, graph3GreenThirdEdges, edgeTypes } from "./data/edges";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimationState, getActiveNodesAtTime, redTaskTimings } from "./data/animation";
 import { Container } from "./components/container";
 import { LAYOUT, ANIMATION_CONFIG, STYLES, TASK_DESCRIPTIONS, TASK_STATES } from '~/config';
 import { SymbolKey } from "./components/symbol-key";
 import { ProgressGraph } from "./components/progress-graph";
+import { ResizableVideo } from '../components/ResizableVideo';
+import { GraphsPanel } from "./components/graphs-panel";
 
 type GraphType = {
   level: 1 | 2 | 3;
@@ -81,6 +83,12 @@ function FlowComponent() {
     isGreenPhase: false
   });
   const [animationFrameId, setAnimationFrameId] = useState<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [selectedVideo, setSelectedVideo] = useState('/videos/1_1_1.mp4');
+  const videos = [
+    { name: 'Video 1', path: '/videos/1_1_1.mp4' },
+    { name: 'Video 2', path: '/videos/3_3_3.mp4' }
+  ];
 
   const getNodesForGraph = (graph: GraphType) => {
     if (graph.level === 1) return graph1Nodes;
@@ -114,8 +122,16 @@ function FlowComponent() {
     }[graph.group];
   };
 
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error('Error loading video:', e);
+    console.error('Video source:', e.currentTarget.src);
+  };
+
   const startAnimation = () => {
     setIsAnimating(true);
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
     let startTime = Date.now();
     const totalDuration = ANIMATION_CONFIG.DURATION.TOTAL;
 
@@ -147,6 +163,10 @@ function FlowComponent() {
   };
 
   const stopAnimation = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
     // Cancel the animation frame if it exists
     if (animationFrameId !== null) {
       cancelAnimationFrame(animationFrameId);
@@ -351,6 +371,14 @@ function FlowComponent() {
           </motion.div>
         </div>
 
+        <ResizableVideo
+          selectedVideo={selectedVideo}
+          onVideoChange={setSelectedVideo}
+          videos={videos}
+          videoRef={videoRef}
+          onError={handleVideoError}
+        />
+
         <div className="absolute right-4 top-4 z-10 flex gap-2">
           <button
             className="rounded-md bg-green-500 px-4 py-2 text-white shadow-md hover:bg-green-600 disabled:opacity-50"
@@ -372,11 +400,10 @@ function FlowComponent() {
           </div>
         </div>
         
-        <div className="absolute left-4 top-4 z-10 flex flex-col gap-2 text-sm text-gray-500">
-          <div>Graph 1 (Top)</div>
-          <div>Graph 2 (Bottom Left)</div>
-          <div>Graph 3 (Bottom Right)</div>
-        </div>
+        <GraphsPanel 
+          animationState={animationState}
+          isAnimating={isAnimating}
+        />
 
         <ReactFlow
           nodes={nodes}
@@ -399,7 +426,6 @@ function FlowComponent() {
         >
           <Background />
           <Controls />
-          <SymbolKey />
           {isAnimating && <ProgressGraph progress={progress} />}
 
           {/* Level 1 Containers */}
@@ -515,6 +541,8 @@ function FlowComponent() {
             />
           )}
         </ReactFlow>
+
+        <SymbolKey />
       </motion.div>
     </AnimatePresence>
   );

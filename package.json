@@ -12,6 +12,7 @@
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tisoap/react-flow-smart-edge": "^3.0.0",
+    "@types/react-resizable": "^3.0.8",
     "@xyflow/react": "^12.1.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.13.4",
@@ -20,6 +21,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-latex-next": "^3.0.0",
+    "react-resizable": "^3.0.5",
     "reactflow": "^11.11.4",
     "recharts": "^2.14.1",
     "tailwind-merge": "^2.5.2",
