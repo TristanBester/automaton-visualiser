@@ -44,6 +44,7 @@ const getGraphIdFromPath = (path: string): GraphId => {
 function FlowComponent() {
   const { setViewport } = useReactFlow();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const animationFrameRef = useRef<number>();
   const [selectedVideo, setSelectedVideo] = useState("/videos/1_1_1.mp4");
   const videos = useMemo(
     () => [
@@ -101,6 +102,9 @@ function FlowComponent() {
     useAnimationContext();
 
   const [isPaused, setIsPaused] = useState(false);
+  const [animationStartTime, setAnimationStartTime] = useState<number | null>(
+    null,
+  );
 
   // Add speed state
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
@@ -155,55 +159,63 @@ function FlowComponent() {
     );
   };
 
-  // Update the animation step handler to use the current animation
-  const handleAnimationStep = async () => {
-    if (!isAnimating || !activeAnimation) return;
+  // Update the animation step handler to use timestamps
+  const handleAnimationStep = () => {
+    if (!isAnimating || !activeAnimation || !animationStartTime) return;
 
-    if (currentStepIndex >= activeAnimation.length) {
-      setIsAnimating(false);
-      updateNodeStates(null);
+    const currentTime = performance.now();
+    const elapsedTime = (currentTime - animationStartTime) * playbackSpeed;
+
+    // Find the current step based on elapsed time
+    const currentStep = activeAnimation.find((step, index) => {
+      const nextStep = activeAnimation[index + 1];
+      return (
+        elapsedTime >= step.startTime &&
+        (!nextStep || elapsedTime < nextStep.startTime)
+      );
+    });
+
+    // Update node states if we found a step
+    if (currentStep) {
+      updateNodeStates(currentStep.nodeId);
+    }
+
+    // Check if animation is complete
+    if (elapsedTime >= activeAnimation[activeAnimation.length - 1].startTime) {
+      stopAnimation();
       return;
     }
 
-    const step = activeAnimation[currentStepIndex];
-    if (!step) return;
-
-    updateNodeStates(step.nodeId);
-    // Adjust duration based on playback speed
-    await new Promise((resolve) =>
-      setTimeout(resolve, step.duration / playbackSpeed),
-    );
-    setCurrentStepIndex((prev) => prev + 1);
+    // Request next frame
+    animationFrameRef.current = requestAnimationFrame(handleAnimationStep);
   };
 
-  // Animation effect
-  useEffect(() => {
-    if (isAnimating && !isPaused) {
-      handleAnimationStep();
-    }
-  }, [isAnimating, isPaused, currentStepIndex]);
-
-  // Add animation controls
+  // Update animation controls
   const startAnimation = () => {
     if (!activeAnimation) return;
     if (isPaused) {
+      const pausedTime = performance.now() - (animationStartTime || 0);
+      setAnimationStartTime(performance.now() - pausedTime);
       setIsPaused(false);
       if (videoRef.current) {
         videoRef.current.play();
       }
     } else {
-      setCurrentStepIndex(0);
+      setAnimationStartTime(performance.now());
       setIsAnimating(true);
-      // Start video playback
       if (videoRef.current) {
-        videoRef.current.currentTime = 0; // Reset video to start
+        videoRef.current.currentTime = 0;
         videoRef.current.play();
       }
     }
+    animationFrameRef.current = requestAnimationFrame(handleAnimationStep);
   };
 
   const pauseAnimation = () => {
     setIsPaused(true);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
     if (videoRef.current) {
       videoRef.current.pause();
     }
@@ -212,14 +224,32 @@ function FlowComponent() {
   const stopAnimation = () => {
     setIsAnimating(false);
     setIsPaused(false);
-    setCurrentStepIndex(0);
+    setAnimationStartTime(null);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
     updateNodeStates(null);
-    // Stop and reset video
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
   };
+
+  // Clean up animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+
+  // Replace the previous animation effect
+  useEffect(() => {
+    if (isAnimating && !isPaused) {
+      animationFrameRef.current = requestAnimationFrame(handleAnimationStep);
+    }
+  }, [isAnimating, isPaused]);
 
   // Add video end handler
   useEffect(() => {

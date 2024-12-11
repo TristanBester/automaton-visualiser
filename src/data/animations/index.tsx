@@ -42,6 +42,5 @@ export const ALL_NODES = {
 
 export type AnimationStep = {
   nodeId: string;
-  duration: number;
-  delay?: number;
+  startTime: number;
 };
