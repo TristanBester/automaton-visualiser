@@ -4,12 +4,15 @@ import {
   CustomNode,
   InternalNode,
   TerminalNode,
+  DecisionNode,
 } from "../pages/components/nodes/basic";
 import { NodeData } from "~/pages/types";
 
 export const nodeTypes = {
-  internal: (props: NodeProps<NodeData>) => <InternalNode {...props} />,
-  terminal: (props: NodeProps) => <TerminalNode {...props} />,
-  animated: (props: NodeProps) => <AnimatedNode {...props} />,
-  custom: (props: NodeProps) => <CustomNode {...props} />,
+  internal: InternalNode,
+  terminal: TerminalNode,
+  animated: AnimatedNode,
+  custom: CustomNode,
+  decision: DecisionNode,
+  abstract: InternalNode,
 };

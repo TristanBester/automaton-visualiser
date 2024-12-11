@@ -12,23 +12,17 @@ import "@xyflow/react/dist/style.css";
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Container } from "./components/container";
 import { LAYOUT, STYLES } from "~/config";
 import { SymbolKey } from "./components/symbol-key";
 import { ResizableVideo } from "../components/ResizableVideo";
 import { GraphsPanel } from "./components/graphs-panel";
-import { level1Nodes as level1Nodes111 } from "~/data/1-1-1/nodes/nodes-level-1";
-import { level2Nodes as level2Nodes111 } from "~/data/1-1-1/nodes/nodes-level-2";
-import { level3Nodes as level3Nodes111 } from "~/data/1-1-1/nodes/nodes-level-3";
-import { level1Edges as level1Edges111 } from "~/data/1-1-1/edges/edges-level-1";
-import { level2Edges as level2Edges111 } from "~/data/1-1-1/edges/edges-level-2";
-import { level3Edges as level3Edges111 } from "~/data/1-1-1/edges/edges-level-3";
-import { level1Nodes as level1Nodes333 } from "~/data/3-3-3/nodes/nodes-level-1";
-import { level2Nodes as level2Nodes333 } from "~/data/3-3-3/nodes/nodes-level-2";
-import { level3Nodes as level3Nodes333 } from "~/data/3-3-3/nodes/nodes-level-3";
-import { level1Edges as level1Edges333 } from "~/data/3-3-3/edges/edges-level-1";
-import { level2Edges as level2Edges333 } from "~/data/3-3-3/edges/edges-level-2";
-import { level3Edges as level3Edges333 } from "~/data/3-3-3/edges/edges-level-3";
+import {
+  decisionNode,
+  abstractNodes,
+  detailedNodesRed,
+  detailedNodesGreen,
+  detailedNodesBlue,
+} from "~/data/nodes";
 import { edgeTypes } from "~/data/edge-types";
 import { nodeTypes } from "~/data/node-types";
 import { GraphId } from "~/pages/types";
@@ -59,11 +53,29 @@ function FlowComponent() {
     console.error("Video source:", e.currentTarget.src);
   };
 
-  // Initialize nodes and edges
+  // Add back the selectedGraphId state
+  const [selectedGraphId, setSelectedGraphId] = useState<GraphId>("1-1-1");
+
+  // Initialize nodes and edges with a useEffect to handle position updates
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
-  const [selectedGraphId, setSelectedGraphId] = useState<GraphId>("1-1-1");
+  // Update the useEffect to include detailed nodes
+  useEffect(() => {
+    setNodes([
+      decisionNode,
+      ...abstractNodes,
+      ...detailedNodesRed,
+      ...detailedNodesGreen,
+      ...detailedNodesBlue,
+    ]);
+  }, [
+    decisionNode,
+    abstractNodes,
+    detailedNodesRed,
+    detailedNodesGreen,
+    detailedNodesBlue,
+  ]);
 
   // Add graph selection options
   const graphOptions: { id: GraphId; label: string }[] = [
@@ -87,77 +99,6 @@ function FlowComponent() {
     timeElapsed: 0,
     isGreenPhase: false,
   });
-
-  // Fix the Container component props
-  const containerProps = {
-    x: LAYOUT.CONTAINER.LEVEL_3.RED.FIRST.X || 0, // Provide default value
-    y: LAYOUT.CONTAINER_Y.LEVEL_3,
-    width: LAYOUT.CONTAINER.LEVEL_3.WIDTH,
-    height: LAYOUT.CONTAINER.HEIGHT,
-  };
-
-  // Update nodes and edges when graph changes
-  useEffect(() => {
-    const getGraphData = (graphId: GraphId) => {
-      switch (graphId) {
-        case "1-1-1":
-          return {
-            nodes: {
-              level1: level1Nodes111,
-              level2: level2Nodes111,
-              level3: level3Nodes111,
-            },
-            edges: {
-              level1: level1Edges111,
-              level2: level2Edges111,
-              level3: level3Edges111,
-            },
-          };
-        case "3-3-3":
-          return {
-            nodes: {
-              level1: level1Nodes333,
-              level2: level2Nodes333,
-              level3: level3Nodes333,
-            },
-            edges: {
-              level1: level1Edges333,
-              level2: level2Edges333,
-              level3: level3Edges333,
-            },
-          };
-      }
-    };
-
-    const graphData = getGraphData(selectedGraphId);
-    const { nodes: graphNodes, edges: graphEdges } = graphData;
-
-    const allNodes = [
-      ...graphNodes.level1.all,
-      ...graphNodes.level2.red,
-      ...graphNodes.level2.green,
-      ...(graphNodes.level3.red[0] || []),
-      ...(graphNodes.level3.red[1] || []),
-      ...(graphNodes.level3.red[2] || []),
-      ...(graphNodes.level3.green[0] || []),
-      ...(graphNodes.level3.green[1] || []),
-      ...(graphNodes.level3.green[2] || []),
-    ].filter(Boolean);
-    setNodes(allNodes);
-
-    const allEdges = [
-      ...graphEdges.level1.all,
-      ...graphEdges.level2.red,
-      ...graphEdges.level2.green,
-      ...(graphEdges.level3.red[0] || []),
-      ...(graphEdges.level3.red[1] || []),
-      ...(graphEdges.level3.red[2] || []),
-      ...(graphEdges.level3.green[0] || []),
-      ...(graphEdges.level3.green[1] || []),
-      ...(graphEdges.level3.green[2] || []),
-    ].filter(Boolean);
-    setEdges(allEdges);
-  }, [selectedGraphId, setNodes, setEdges]);
 
   // Initialize viewport once at mount
   useEffect(() => {
@@ -241,7 +182,7 @@ function FlowComponent() {
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
-          fitView={false}
+          fitView={true}
           minZoom={0.1}
           maxZoom={1.5}
           zoomOnScroll={true}
@@ -255,92 +196,6 @@ function FlowComponent() {
         >
           <Background />
           <Controls />
-
-          {/* Level 1 Containers */}
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_1.RED.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_1}
-            width={LAYOUT.CONTAINER.LEVEL_1.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Red Blocks (15s)"
-            color={STYLES.COLORS.RED}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_1.GREEN.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_1}
-            width={LAYOUT.CONTAINER.LEVEL_1.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Green Blocks"
-            color={STYLES.COLORS.GREEN}
-          />
-
-          {/* Level 2 Containers */}
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_2.RED.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_2}
-            width={LAYOUT.CONTAINER.LEVEL_2.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Red Sequential Tasks (5s each)"
-            color={STYLES.COLORS.RED}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_2.GREEN.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_2}
-            width={LAYOUT.CONTAINER.LEVEL_2.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Green Sequential Tasks (5s each)"
-            color={STYLES.COLORS.GREEN}
-          />
-
-          {/* Level 3 Containers */}
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_3.RED.FIRST.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_3}
-            width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Red Block One (5s)"
-            color={STYLES.COLORS.RED}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_3.RED.SECOND.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_3}
-            width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Red Block Two (5s)"
-            color={STYLES.COLORS.RED}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_3.RED.THIRD.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_3}
-            width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Red Block Three (5s)"
-            color={STYLES.COLORS.RED}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_3.GREEN.FIRST.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_3}
-            width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Green Block One (5s)"
-            color={STYLES.COLORS.GREEN}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_3.GREEN.SECOND.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_3}
-            width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Green Block Two (5s)"
-            color={STYLES.COLORS.GREEN}
-          />
-          <Container
-            x={LAYOUT.CONTAINER.LEVEL_3.GREEN.THIRD.X}
-            y={LAYOUT.CONTAINER_Y.LEVEL_3}
-            width={LAYOUT.CONTAINER.LEVEL_3.WIDTH}
-            height={LAYOUT.CONTAINER.HEIGHT}
-            label="Pack Green Block Three (5s)"
-            color={STYLES.COLORS.GREEN}
-          />
         </ReactFlow>
 
         {/* Symbol key */}
