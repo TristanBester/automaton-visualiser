@@ -9,9 +9,8 @@ export type NodeData = {
 export type GraphId = "1-1-1" | "3-3-3";
 
 export type AnimationState = {
-  graph1Active: string | null;
-  graph2Active: string | null;
-  graph3Active: string | null;
+  activeNodeId: string | null;
+  activeEdgeId: string | null;
   timeElapsed: number;
   isGreenPhase: boolean;
 };

@@ -48,8 +48,8 @@ export function InternalNode({ data }: NodeProps<NodeData>) {
       >
         {data?.label}
       </div>
-      <Handle type="source" position={Position.Right} />
-      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} id="source" />
+      <Handle type="target" position={Position.Left} id="target" />
     </motion.div>
   );
 }
@@ -78,8 +78,8 @@ export function DecisionNode({ data }: NodeProps<NodeData>) {
       >
         <div style={{ transform: "rotate(-45deg)" }}>{data?.label}</div>
       </div>
-      <Handle type="source" position={Position.Right} />
-      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} id="source" />
+      <Handle type="target" position={Position.Left} id="target" />
     </motion.div>
   );
 }

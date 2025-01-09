@@ -22,6 +22,7 @@ import {
   detailedNodesRed,
   detailedNodesGreen,
   detailedNodesBlue,
+  initialEdges,
 } from "~/data/nodes";
 import { edgeTypes } from "~/data/edge-types";
 import { nodeTypes } from "~/data/node-types";
@@ -55,7 +56,7 @@ function FlowComponent() {
   );
 
   // UI element visibility state
-  const [showVideo, setShowVideo] = useState(false);
+  const [showVideo, setShowVideo] = useState(true);
   const [showSymbolKey, setShowSymbolKey] = useState(false);
   const [showGraphsPanel, setShowGraphsPanel] = useState(false);
 
@@ -79,6 +80,7 @@ function FlowComponent() {
       ...detailedNodesGreen,
       ...detailedNodesBlue,
     ]);
+    setEdges(initialEdges);
   }, [
     decisionNode,
     abstractNodes,
@@ -175,13 +177,13 @@ function FlowComponent() {
       );
     });
 
-    // Update node states if we found a step
+    // Update states if we found a step
     if (currentStep) {
-      updateNodeStates(currentStep.nodeId);
+      updateStates(currentStep.nodeId, currentStep.edgeId || null);
     }
 
     // Check if animation is complete
-    if (elapsedTime >= activeAnimation[activeAnimation.length - 1].startTime) {
+    if (elapsedTime >= activeAnimation[activeAnimation.length - 1]?.startTime) {
       stopAnimation();
       return;
     }
@@ -294,6 +296,47 @@ function FlowComponent() {
       videoRef.current.playbackRate = playbackSpeed;
     }
   }, [playbackSpeed]);
+
+  // Update the node and edge states
+  const updateStates = (
+    activeNodeId: string | null,
+    activeEdgeId: string | null,
+  ) => {
+    // Update nodes
+    setNodes((nds) =>
+      nds.map((node) => ({
+        ...node,
+        data: {
+          ...node.data,
+          isActive:
+            node.id === activeNodeId ||
+            (activeNodeId?.includes("pack-red-blocks") &&
+              node.id === ABSTRACT_NODES.RED) ||
+            (activeNodeId?.includes("pack-green-blocks") &&
+              node.id === ABSTRACT_NODES.GREEN) ||
+            (activeNodeId?.includes("pack-blue-blocks") &&
+              node.id === ABSTRACT_NODES.BLUE),
+        },
+      })),
+    );
+
+    // Update edges
+    setEdges((eds) =>
+      eds.map((edge) => ({
+        ...edge,
+        style: {
+          ...edge.style,
+          stroke: edge.id === activeEdgeId ? STYLES.COLORS.PURPLE : "#333",
+          strokeWidth: edge.id === activeEdgeId ? 3 : 2,
+          strokeDasharray: edge.id === activeEdgeId ? 5 : undefined,
+          animation:
+            edge.id === activeEdgeId
+              ? "dashdraw 1500ms linear infinite"
+              : undefined,
+        },
+      })),
+    );
+  };
 
   return (
     <AnimatePresence mode="wait">

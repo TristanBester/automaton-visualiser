@@ -42,5 +42,6 @@ export const ALL_NODES = {
 
 export type AnimationStep = {
   nodeId: string;
+  edgeId?: string;
   startTime: number;
 };
