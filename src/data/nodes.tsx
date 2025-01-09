@@ -18,80 +18,43 @@ export const decisionNode = {
   } as NodeData,
 };
 
-export const abstractNodes = [
-  {
-    id: "pack-red-blocks",
-    type: "abstract",
-    position: {
-      x: DELTA_X,
-      y: DELTA_Y,
-    },
-    data: {
-      label: "Pack Red Blocks",
-      style: {
-        backgroundColor: STYLES.COLORS.RED,
-        borderRadius: "4px",
-        width: "200px",
-        height: "150px",
-      },
-    } as NodeData,
-  },
-  {
-    id: "pack-green-blocks",
-    type: "abstract",
-    position: {
-      x: DELTA_X,
-      y: 0,
-    },
-    data: {
-      label: "Pack Green Blocks",
-      style: {
-        backgroundColor: STYLES.COLORS.GREEN,
-        borderRadius: "4px",
-        width: "200px",
-        height: "150px",
-      },
-    } as NodeData,
-  },
-  {
-    id: "pack-blue-blocks",
-    type: "abstract",
-    position: {
-      x: DELTA_X,
-      y: -DELTA_Y,
-    },
-    data: {
-      label: "Pack Blue Blocks",
-      style: {
-        backgroundColor: "#87CEEB", // Light blue color
-        borderRadius: "4px",
-        width: "200px",
-        height: "150px",
-      },
-    } as NodeData,
-  },
-];
+const DETAILED_NODE_DELTA_X = 400;
 
-const DETAILED_NODE_DELTA_X = 200;
+const commonNodeStyle = {
+  borderRadius: "50%",
+  width: "120px",
+  height: "120px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "14px",
+  fontWeight: 600,
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  border: "2px solid rgba(0, 0, 0, 0.1)",
+  transition: "all 0.2s ease-in-out",
+  cursor: "pointer",
+  padding: "10px",
+  textAlign: "center",
+  lineHeight: "1.2",
+} as const;
+
 export const detailedNodesRed = [
   {
     id: "pack-red-blocks-move-above",
     type: "abstract",
     position: {
       x: DELTA_X,
-      y: DELTA_Y - 200,
+      y: DELTA_Y,
     },
     data: {
       label: "Above Red",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.RED,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -100,19 +63,17 @@ export const detailedNodesRed = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 1,
-      y: DELTA_Y - 200,
+      y: DELTA_Y,
     },
     data: {
       label: "Grasp Position",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.RED,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -121,19 +82,17 @@ export const detailedNodesRed = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 2,
-      y: DELTA_Y - 200,
+      y: DELTA_Y,
     },
     data: {
       label: "Grasp",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.RED,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -142,19 +101,17 @@ export const detailedNodesRed = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 3,
-      y: DELTA_Y - 200,
+      y: DELTA_Y,
     },
     data: {
       label: "Packing Position",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.RED,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -163,19 +120,17 @@ export const detailedNodesRed = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 4,
-      y: DELTA_Y - 200,
+      y: DELTA_Y,
     },
     data: {
       label: "Release",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.RED,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -187,19 +142,17 @@ export const detailedNodesGreen = [
     type: "abstract",
     position: {
       x: DELTA_X,
-      y: -200,
+      y: 0,
     },
     data: {
       label: "Above Green",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.GREEN,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -208,19 +161,17 @@ export const detailedNodesGreen = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 1,
-      y: -200,
+      y: -0,
     },
     data: {
       label: "Grasp Position",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.GREEN,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -229,19 +180,17 @@ export const detailedNodesGreen = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 2,
-      y: -200,
+      y: 0,
     },
     data: {
       label: "Grasp",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.GREEN,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -250,19 +199,17 @@ export const detailedNodesGreen = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 3,
-      y: -200,
+      y: 0,
     },
     data: {
       label: "Packing Position",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.GREEN,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -271,19 +218,17 @@ export const detailedNodesGreen = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 4,
-      y: -200,
+      y: 0,
     },
     data: {
       label: "Release",
       style: {
+        ...commonNodeStyle,
         backgroundColor: STYLES.COLORS.GREEN,
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -295,19 +240,17 @@ export const detailedNodesBlue = [
     type: "abstract",
     position: {
       x: DELTA_X,
-      y: -DELTA_Y - 200,
+      y: -DELTA_Y,
     },
     data: {
       label: "Above Blue",
       style: {
+        ...commonNodeStyle,
         backgroundColor: "#87CEEB",
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -316,19 +259,17 @@ export const detailedNodesBlue = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 1,
-      y: -DELTA_Y - 200,
+      y: -DELTA_Y,
     },
     data: {
       label: "Grasp Position",
       style: {
+        ...commonNodeStyle,
         backgroundColor: "#87CEEB",
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -337,19 +278,17 @@ export const detailedNodesBlue = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 2,
-      y: -DELTA_Y - 200,
+      y: -DELTA_Y,
     },
     data: {
       label: "Grasp",
       style: {
+        ...commonNodeStyle,
         backgroundColor: "#87CEEB",
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -358,19 +297,17 @@ export const detailedNodesBlue = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 3,
-      y: -DELTA_Y - 200,
+      y: -DELTA_Y,
     },
     data: {
       label: "Packing Position",
       style: {
+        ...commonNodeStyle,
         backgroundColor: "#87CEEB",
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -379,19 +316,17 @@ export const detailedNodesBlue = [
     type: "abstract",
     position: {
       x: DELTA_X + DETAILED_NODE_DELTA_X * 4,
-      y: -DELTA_Y - 200,
+      y: -DELTA_Y,
     },
     data: {
       label: "Release",
       style: {
+        ...commonNodeStyle,
         backgroundColor: "#87CEEB",
-        borderRadius: "50%",
-        width: "80px",
-        height: "80px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "12px",
+        "&:hover": {
+          transform: "scale(1.05)",
+          boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
+        },
       },
     } as NodeData,
   },
@@ -405,7 +340,7 @@ export const initialEdges = [
     sourceHandle: "source",
     targetHandle: "target",
     type: "latex",
-    label: "\\alpha",
+    label: "\\langle \\tau, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -427,7 +362,7 @@ export const initialEdges = [
     source: "pack-red-blocks-move-above",
     target: "pack-red-blocks-move-above",
     type: "selfLoop",
-    label: "\\beta",
+    label: "\\langle \\neg A_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -446,7 +381,7 @@ export const initialEdges = [
     source: "pack-red-blocks-move-above",
     target: "pack-red-blocks-grasp",
     type: "latex",
-    label: "\\gamma",
+    label: "\\langle A_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -465,7 +400,7 @@ export const initialEdges = [
     source: "pack-red-blocks-grasp",
     target: "pack-red-blocks-grasp-action",
     type: "latex",
-    label: "\\delta",
+    label: "\\langle  GP_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -484,7 +419,7 @@ export const initialEdges = [
     source: "pack-red-blocks-grasp-action",
     target: "pack-red-blocks-move-to-packing-position",
     type: "latex",
-    label: "\\epsilon",
+    label: "\\langle G_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -503,7 +438,7 @@ export const initialEdges = [
     source: "pack-red-blocks-move-to-packing-position",
     target: "pack-red-blocks-release",
     type: "latex",
-    label: "\\zeta",
+    label: "\\langle PP_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -522,7 +457,7 @@ export const initialEdges = [
     source: "pack-red-blocks-grasp",
     target: "pack-red-blocks-grasp",
     type: "selfLoop",
-    label: "\\theta_1",
+    label: "\\langle \\neg GP_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -541,7 +476,7 @@ export const initialEdges = [
     source: "pack-red-blocks-grasp-action",
     target: "pack-red-blocks-grasp-action",
     type: "selfLoop",
-    label: "\\theta_2",
+    label: "\\langle \\neg G_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -560,7 +495,7 @@ export const initialEdges = [
     source: "pack-red-blocks-move-to-packing-position",
     target: "pack-red-blocks-move-to-packing-position",
     type: "selfLoop",
-    label: "\\theta_3",
+    label: "\\langle \\neg PP_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -579,7 +514,7 @@ export const initialEdges = [
     source: "pack-red-blocks-release",
     target: "pack-red-blocks-release",
     type: "selfLoop",
-    label: "\\theta_4",
+    label: "\\langle \\neg R_R, [1, -, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -600,7 +535,7 @@ export const initialEdges = [
     sourceHandle: "source",
     targetHandle: "target",
     type: "latex",
-    label: "\\alpha_g",
+    label: "\\langle \\tau, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -619,7 +554,7 @@ export const initialEdges = [
     source: "pack-green-blocks-move-above",
     target: "pack-green-blocks-move-above",
     type: "selfLoop",
-    label: "\\beta_g",
+    label: "\\langle \\neg A_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -638,7 +573,7 @@ export const initialEdges = [
     source: "pack-green-blocks-move-above",
     target: "pack-green-blocks-grasp",
     type: "latex",
-    label: "\\gamma_g",
+    label: "\\langle A_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -657,7 +592,7 @@ export const initialEdges = [
     source: "pack-green-blocks-grasp",
     target: "pack-green-blocks-grasp-action",
     type: "latex",
-    label: "\\delta_g",
+    label: "\\langle GP_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -676,7 +611,7 @@ export const initialEdges = [
     source: "pack-green-blocks-grasp-action",
     target: "pack-green-blocks-move-to-packing-position",
     type: "latex",
-    label: "\\epsilon_g",
+    label: "\\langle G_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -695,7 +630,7 @@ export const initialEdges = [
     source: "pack-green-blocks-move-to-packing-position",
     target: "pack-green-blocks-release",
     type: "latex",
-    label: "\\zeta_g",
+    label: "\\langle PP_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -714,7 +649,7 @@ export const initialEdges = [
     source: "pack-green-blocks-grasp",
     target: "pack-green-blocks-grasp",
     type: "selfLoop",
-    label: "\\theta_{g1}",
+    label: "\\langle \\neg GP_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -733,7 +668,7 @@ export const initialEdges = [
     source: "pack-green-blocks-grasp-action",
     target: "pack-green-blocks-grasp-action",
     type: "selfLoop",
-    label: "\\theta_{g2}",
+    label: "\\langle \\neg G_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -752,7 +687,7 @@ export const initialEdges = [
     source: "pack-green-blocks-move-to-packing-position",
     target: "pack-green-blocks-move-to-packing-position",
     type: "selfLoop",
-    label: "\\theta_{g3}",
+    label: "\\langle \\neg PP_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -771,7 +706,7 @@ export const initialEdges = [
     source: "pack-green-blocks-release",
     target: "pack-green-blocks-release",
     type: "selfLoop",
-    label: "\\theta_{g4}",
+    label: "\\langle \\neg R_G, [0, 1, -] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -792,7 +727,7 @@ export const initialEdges = [
     sourceHandle: "source",
     targetHandle: "target",
     type: "latex",
-    label: "\\alpha_b",
+    label: "\\langle \\tau, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -811,7 +746,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-move-above",
     target: "pack-blue-blocks-move-above",
     type: "selfLoop",
-    label: "\\beta_b",
+    label: "\\langle \\neg A_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -830,7 +765,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-move-above",
     target: "pack-blue-blocks-grasp",
     type: "latex",
-    label: "\\gamma_b",
+    label: "\\langle A_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -849,7 +784,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-grasp",
     target: "pack-blue-blocks-grasp-action",
     type: "latex",
-    label: "\\delta_b",
+    label: "\\langle GP_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -868,7 +803,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-grasp-action",
     target: "pack-blue-blocks-move-to-packing-position",
     type: "latex",
-    label: "\\epsilon_b",
+    label: "\\langle G_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -887,7 +822,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-move-to-packing-position",
     target: "pack-blue-blocks-release",
     type: "latex",
-    label: "\\zeta_b",
+    label: "\\langle PP_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -906,7 +841,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-grasp",
     target: "pack-blue-blocks-grasp",
     type: "selfLoop",
-    label: "\\theta_{b1}",
+    label: "\\langle \\neg GP_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -925,7 +860,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-grasp-action",
     target: "pack-blue-blocks-grasp-action",
     type: "selfLoop",
-    label: "\\theta_{b2}",
+    label: "\\langle \\neg G_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -944,7 +879,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-move-to-packing-position",
     target: "pack-blue-blocks-move-to-packing-position",
     type: "selfLoop",
-    label: "\\theta_{b3}",
+    label: "\\langle \\neg PP_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,
@@ -963,7 +898,7 @@ export const initialEdges = [
     source: "pack-blue-blocks-release",
     target: "pack-blue-blocks-release",
     type: "selfLoop",
-    label: "\\theta_{b4}",
+    label: "\\langle \\neg R_B, [0, 0, 1] \\rangle",
     labelStyle: {
       fill: "#333",
       fontWeight: 700,

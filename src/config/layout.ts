@@ -75,16 +75,6 @@ export const LAYOUT = {
 
   // Node positions for each graph level
   NODES: {
-    LEVEL_1: {
-      RED: {
-        X: BASE.X + 700,
-        Y: Y_LEVELS.GRAPH_1,
-      },
-      GREEN: {
-        X: BASE.X + 5220,
-        Y: Y_LEVELS.GRAPH_1,
-      },
-    },
     LEVEL_2: {
       RED: {
         X: LEVEL_2_RED,
@@ -137,15 +127,6 @@ export const LAYOUT = {
   // Container dimensions and positions for each level
   CONTAINER: {
     HEIGHT: 300,
-    LEVEL_1: {
-      WIDTH: 400,
-      RED: {
-        X: BASE.X + 540,
-      },
-      GREEN: {
-        X: BASE.X + 5050,
-      },
-    },
     LEVEL_2: {
       WIDTH: 1800,
       RED: {

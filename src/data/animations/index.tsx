@@ -1,8 +1,5 @@
 export const ABSTRACT_NODES = {
   DECISION: "decision-node",
-  RED: "pack-red-blocks",
-  GREEN: "pack-green-blocks",
-  BLUE: "pack-blue-blocks",
 } as const;
 
 export const RED_SEQUENCE = {

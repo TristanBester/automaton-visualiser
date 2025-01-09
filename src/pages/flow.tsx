@@ -18,7 +18,6 @@ import { ResizableVideo } from "~/components/ResizableVideo";
 import { GraphsPanel } from "./components/graphs-panel";
 import {
   decisionNode,
-  abstractNodes,
   detailedNodesRed,
   detailedNodesGreen,
   detailedNodesBlue,
@@ -75,19 +74,12 @@ function FlowComponent() {
   useEffect(() => {
     setNodes([
       decisionNode,
-      ...abstractNodes,
       ...detailedNodesRed,
       ...detailedNodesGreen,
       ...detailedNodesBlue,
     ]);
     setEdges(initialEdges);
-  }, [
-    decisionNode,
-    abstractNodes,
-    detailedNodesRed,
-    detailedNodesGreen,
-    detailedNodesBlue,
-  ]);
+  }, [decisionNode, detailedNodesRed, detailedNodesGreen, detailedNodesBlue]);
 
   // Add these state variables
   const [isAnimating, setIsAnimating] = useState(false);
@@ -146,16 +138,7 @@ function FlowComponent() {
         ...node,
         data: {
           ...node.data,
-          isActive:
-            // Direct match
-            node.id === activeNodeId ||
-            // Parent node activation logic
-            (activeNodeId?.includes("pack-red-blocks") &&
-              node.id === ABSTRACT_NODES.RED) ||
-            (activeNodeId?.includes("pack-green-blocks") &&
-              node.id === ABSTRACT_NODES.GREEN) ||
-            (activeNodeId?.includes("pack-blue-blocks") &&
-              node.id === ABSTRACT_NODES.BLUE),
+          isActive: node.id === activeNodeId,
         },
       })),
     );
@@ -308,14 +291,7 @@ function FlowComponent() {
         ...node,
         data: {
           ...node.data,
-          isActive:
-            node.id === activeNodeId ||
-            (activeNodeId?.includes("pack-red-blocks") &&
-              node.id === ABSTRACT_NODES.RED) ||
-            (activeNodeId?.includes("pack-green-blocks") &&
-              node.id === ABSTRACT_NODES.GREEN) ||
-            (activeNodeId?.includes("pack-blue-blocks") &&
-              node.id === ABSTRACT_NODES.BLUE),
+          isActive: node.id === activeNodeId,
         },
       })),
     );

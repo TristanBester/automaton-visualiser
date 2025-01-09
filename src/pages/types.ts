@@ -14,3 +14,8 @@ export type AnimationState = {
   timeElapsed: number;
   isGreenPhase: boolean;
 };
+
+export interface Symbol {
+  symbol: string;
+  description: string;
+}
