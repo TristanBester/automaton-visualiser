@@ -30,7 +30,10 @@ export function InternalNode({ data }: NodeProps<NodeData>) {
       animate={{ scale: 1 }}
       exit={{ scale: 0 }}
       transition={{ duration: 0.5 }}
-      style={{ position: "relative" }}
+      style={{
+        position: "relative",
+        zIndex: 1,
+      }}
     >
       <div
         style={{
@@ -44,6 +47,8 @@ export function InternalNode({ data }: NodeProps<NodeData>) {
           backgroundColor: data?.isActive
             ? STYLES.COLORS.YELLOW
             : data?.style?.backgroundColor,
+          position: "relative",
+          zIndex: 1,
         }}
       >
         {data?.label}
@@ -61,7 +66,10 @@ export function DecisionNode({ data }: NodeProps<NodeData>) {
       animate={{ scale: 1 }}
       exit={{ scale: 0 }}
       transition={{ duration: 0.5 }}
-      style={{ position: "relative" }}
+      style={{
+        position: "relative",
+        zIndex: 1,
+      }}
     >
       <div
         style={{
@@ -72,8 +80,10 @@ export function DecisionNode({ data }: NodeProps<NodeData>) {
           borderRadius: "0",
           transform: "rotate(45deg)",
           backgroundColor: data?.isActive
-            ? STYLES.COLORS.PURPLE
-            : data?.style?.backgroundColor,
+            ? STYLES.COLORS.YELLOW
+            : STYLES.COLORS.PURPLE,
+          position: "relative",
+          zIndex: 1,
         }}
       >
         <div style={{ transform: "rotate(-45deg)" }}>{data?.label}</div>

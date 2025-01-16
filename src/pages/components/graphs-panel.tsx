@@ -8,7 +8,6 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { GraphId } from "~/pages/types";
 import { loadCSVData, type DataPoint } from "~/utils/csv-loader";
 
 type GraphProps = {
@@ -18,6 +17,7 @@ type GraphProps = {
   isAnimating: boolean;
   data: DataPoint[];
   videoDuration: number;
+  hasCompleted?: boolean;
 };
 
 const Graph = ({
@@ -27,6 +27,7 @@ const Graph = ({
   isAnimating,
   data,
   videoDuration,
+  hasCompleted = false,
 }: GraphProps) => {
   const currentTime = (progress / 100) * videoDuration;
 
@@ -37,14 +38,13 @@ const Graph = ({
     const timeScale = videoDuration / maxDataTime;
 
     return data
-      .filter((point) => point.time * timeScale <= currentTime)
+      .filter((point) => hasCompleted || point.time * timeScale <= currentTime)
       .map((point) => ({
         time: point.time * timeScale,
         value: point.value,
-        currentValue:
-          point.time * timeScale <= currentTime ? point.value : null,
+        currentValue: point.value,
       }));
-  }, [data, currentTime, videoDuration]);
+  }, [data, currentTime, videoDuration, hasCompleted]);
 
   return (
     <div className="w-full rounded-lg bg-white p-4 shadow-md">
@@ -95,15 +95,15 @@ const Graph = ({
 interface GraphsPanelProps {
   animationState: AnimationState;
   isAnimating: boolean;
-  graphId: GraphId;
   videoRef: React.RefObject<HTMLVideoElement>;
+  hasCompleted: boolean;
 }
 
 export function GraphsPanel({
   animationState,
   isAnimating,
-  graphId,
   videoRef,
+  hasCompleted,
 }: GraphsPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [returnsData, setReturnsData] = useState<DataPoint[]>([]);
@@ -112,14 +112,14 @@ export function GraphsPanel({
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
-  // Load CSV data when graphId changes
+  // Update CSV loading to use fixed path
   useEffect(() => {
     const loadData = async () => {
       try {
         const [returns, values, rewards] = await Promise.all([
-          loadCSVData(`/returns/${graphId}.csv`),
-          loadCSVData(`/values/${graphId}.csv`),
-          loadCSVData(`/rewards/${graphId}.csv`),
+          loadCSVData("/returns/3-3-3.csv"),
+          loadCSVData("/values/3-3-3.csv"),
+          loadCSVData("/rewards/3-3-3.csv"),
         ]);
 
         setReturnsData(returns);
@@ -133,7 +133,7 @@ export function GraphsPanel({
     };
 
     void loadData();
-  }, [graphId]);
+  }, []); // Only load once on mount
 
   // Update progress when video time changes
   useEffect(() => {
@@ -160,15 +160,7 @@ export function GraphsPanel({
   }
 
   return (
-    <div className="absolute right-4 top-24 z-[1000] flex flex-col gap-4">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="ml-auto flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold shadow-md hover:bg-gray-50"
-      >
-        {isExpanded ? "Hide Graphs" : "Show Graphs"}
-        <span className="text-gray-500">{isExpanded ? "▼" : "◀"}</span>
-      </button>
-
+    <div className="absolute right-4 top-32 z-[1000] flex flex-col gap-4">
       {isExpanded && (
         <div className="flex w-80 flex-col gap-4">
           <Graph
@@ -178,6 +170,7 @@ export function GraphsPanel({
             isAnimating={isAnimating}
             data={rewardsData}
             videoDuration={videoDuration}
+            hasCompleted={hasCompleted}
           />
           <Graph
             title="Values"
@@ -186,6 +179,7 @@ export function GraphsPanel({
             isAnimating={isAnimating}
             data={valuesData}
             videoDuration={videoDuration}
+            hasCompleted={hasCompleted}
           />
           <Graph
             title="Returns"
@@ -194,6 +188,7 @@ export function GraphsPanel({
             isAnimating={isAnimating}
             data={returnsData}
             videoDuration={videoDuration}
+            hasCompleted={hasCompleted}
           />
         </div>
       )}

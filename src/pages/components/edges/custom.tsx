@@ -1,4 +1,4 @@
-import { BaseEdge, EdgeLabelRenderer } from "@xyflow/react";
+import { BaseEdge, getBezierPath, Position } from "@xyflow/react";
 import { LAYOUT } from "~/config";
 
 type CustomEdgeProps = {
@@ -6,6 +6,8 @@ type CustomEdgeProps = {
   sourceY: number;
   targetX: number;
   targetY: number;
+  sourcePosition: Position;
+  targetPosition: Position;
   label?: string;
   style?: React.CSSProperties;
   markerEnd?: string;
@@ -16,38 +18,46 @@ export default function CustomEdge({
   sourceY,
   targetX,
   targetY,
+  sourcePosition,
+  targetPosition,
   label,
   style = {},
   markerEnd,
 }: CustomEdgeProps) {
-  const radius = LAYOUT.NODE.DIAMETER / 2;
-  const gap = 5; // Small gap between edge and node
-
-  // Calculate angle between nodes
-  const dx = targetX - sourceX;
-  const dy = targetY - sourceY;
-  const angle = Math.atan2(dy, dx);
-
-  // Find points on circumference of source and target nodes
-  const startX = sourceX + (radius + gap) * Math.cos(angle) - 10000;
-  const startY = sourceY + (radius + gap) * Math.sin(angle);
-  const endX = targetX - (radius + gap) * Math.cos(angle);
-  const endY = targetY - (radius + gap) * Math.sin(angle);
-
-  // Create path between circumference points
-  const path = `
-    M ${startX} ${startY}
-    L ${endX} ${endY}
-  `;
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+    curvature: 0.2,
+    offset: 10,
+  });
 
   return (
-    <BaseEdge 
-      path={path}
-      style={{
-        ...style,
-        strokeWidth: 2,
-      }}
-      markerEnd={markerEnd}
-    />
+    <>
+      <defs>
+        <marker
+          id="large-arrow"
+          viewBox="0 0 10 10"
+          refX="7"
+          refY="5"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+        </marker>
+      </defs>
+      <BaseEdge
+        path={edgePath}
+        style={{
+          ...style,
+          strokeWidth: 2,
+        }}
+        markerEnd="url(#large-arrow)"
+      />
+    </>
   );
-} 
+}

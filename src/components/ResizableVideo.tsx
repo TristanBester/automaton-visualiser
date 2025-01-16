@@ -38,14 +38,14 @@ export const ResizableVideo: React.FC<ResizableVideoProps> = ({
         <div
           className="h-full w-full overflow-hidden rounded-lg bg-white p-4 shadow-lg"
           style={{
-            width: dimensions.width - 16, // Adjust for padding
+            width: dimensions.width - 16,
             height: dimensions.height - 16,
           }}
         >
           <video
             ref={videoRef}
             src={selectedVideo}
-            controls={!isAnimating}
+            controls={false}
             className="h-full w-full rounded-md"
             onError={onError}
           />

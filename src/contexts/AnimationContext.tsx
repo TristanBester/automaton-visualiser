@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { type AnimationStep } from "~/data/animations";
-import { ANIMATION_1_1_1 } from "~/data/animations/animation-1-1-1";
 import { ANIMATION_3_3_3 } from "~/data/animations/animation-3-3-3";
 
 type AnimationContextType = {
@@ -18,26 +17,9 @@ const defaultContext: AnimationContextType = {
 const AnimationContext = createContext<AnimationContextType>(defaultContext);
 
 export function AnimationProvider({ children }: { children: React.ReactNode }) {
-  const [currentAnimation, setCurrentAnimation] = useState(
-    defaultContext.currentAnimation,
-  );
-  const [activeAnimation, setActiveAnimation] = useState(
-    defaultContext.activeAnimation,
-  );
-
-  useEffect(() => {
-    const newAnimation = (() => {
-      switch (currentAnimation) {
-        case "1-1-1":
-          return ANIMATION_1_1_1;
-        case "3-3-3":
-          return ANIMATION_3_3_3;
-        default:
-          return ANIMATION_3_3_3;
-      }
-    })();
-    setActiveAnimation(newAnimation);
-  }, [currentAnimation]);
+  const [activeAnimation] = useState(defaultContext.activeAnimation);
+  const [currentAnimation] = useState(defaultContext.currentAnimation);
+  const setCurrentAnimation = () => {}; // No-op since we don't need to change animations
 
   const value = {
     activeAnimation,

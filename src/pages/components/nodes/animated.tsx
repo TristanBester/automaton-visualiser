@@ -33,6 +33,10 @@ export function AnimatedNode({ data, id }: NodeProps<NodeData>) {
         animate={isOpen ? "open" : "closed"}
         transition={{ duration: 3, times: [0, 0.1, 0.2, 1.0] }}
         variants={variants}
+        style={{
+          position: "relative",
+          zIndex: 1,
+        }}
       >
         <Latex>$u_0$</Latex>
         <button onClick={() => setIsOpen((isOpen) => !isOpen)}> click</button>

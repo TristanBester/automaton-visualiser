@@ -1,12 +1,14 @@
 import { type Node } from "@xyflow/react";
 
-export type NodeData = {
-  label: string;
+export interface NodeData {
+  id: string;
+  label: React.ReactNode;
   isActive?: boolean;
-  style?: React.CSSProperties;
-} & Partial<Node>;
-
-export type GraphId = "1-1-1" | "3-3-3";
+  style?: {
+    backgroundColor?: string;
+    [key: string]: any;
+  };
+}
 
 export type AnimationState = {
   activeNodeId: string | null;

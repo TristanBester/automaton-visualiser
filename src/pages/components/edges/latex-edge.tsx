@@ -21,12 +21,26 @@ export default function LatexEdge({
     targetX,
     targetY,
     targetPosition,
-    curvature: 0.5,
+    curvature: 0.2,
+    offset: 10,
   });
 
   return (
     <>
-      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <defs>
+        <marker
+          id="large-arrow"
+          viewBox="0 0 10 10"
+          refX="9"
+          refY="5"
+          markerWidth="8"
+          markerHeight="8"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+        </marker>
+      </defs>
+      <BaseEdge path={edgePath} style={style} markerEnd="url(#large-arrow)" />
       {label && (
         <foreignObject
           x={labelX - 20}

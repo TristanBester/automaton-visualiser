@@ -25,33 +25,17 @@ import {
 } from "~/data/nodes";
 import { edgeTypes } from "~/data/edge-types";
 import { nodeTypes } from "~/data/node-types";
-import { GraphId } from "~/pages/types";
 import { ABSTRACT_NODES } from "~/data/animations";
-import { AnimationSelector } from "./components/AnimationSelector";
 import { AnimationProvider } from "~/contexts/AnimationContext";
 import { useAnimationContext } from "~/contexts/AnimationContext";
 import { type AnimationState } from "~/pages/types";
-import { VideoSelector } from "~/components/VideoSelector";
 import { SpeedSelector } from "~/components/SpeedSelector";
-
-// Add this helper function near the top of the file
-const getGraphIdFromPath = (path: string): GraphId => {
-  const id = path.split("/").pop()?.split(".")[0] ?? "3-3-3";
-  return id as GraphId;
-};
 
 function FlowComponent() {
   const { setViewport } = useReactFlow();
   const videoRef = useRef<HTMLVideoElement>(null);
   const animationFrameRef = useRef<number>();
-  const [selectedVideo, setSelectedVideo] = useState("/videos/1_1_1.mp4");
-  const videos = useMemo(
-    () => [
-      { name: "1-1-1", path: "/videos/1-1-1.mp4" },
-      { name: "3-3-3", path: "/videos/3-3-3.mp4" },
-    ],
-    [],
-  );
+  const VIDEO_PATH = "/videos/3-3-3.mp4";
 
   // UI element visibility state
   const [showVideo, setShowVideo] = useState(true);
@@ -83,9 +67,8 @@ function FlowComponent() {
   // Add these state variables
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationState, setAnimationState] = useState<AnimationState>({
-    graph1Active: null,
-    graph2Active: null,
-    graph3Active: null,
+    activeNodeId: null,
+    activeEdgeId: null,
     timeElapsed: 0,
     isGreenPhase: false,
   });
@@ -94,7 +77,6 @@ function FlowComponent() {
   const { activeAnimation, currentAnimation, setCurrentAnimation } =
     useAnimationContext();
 
-  const [isPaused, setIsPaused] = useState(false);
   const [animationStartTime, setAnimationStartTime] = useState<number | null>(
     null,
   );
@@ -102,29 +84,10 @@ function FlowComponent() {
   // Add speed state
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
 
-  // Handle both video and animation selection
-  const handleSelectionChange = (videoPath: string) => {
-    setSelectedVideo(videoPath);
-    // Extract animation ID from video path (e.g., "3-3-3" from "/videos/3_3_3.mp4")
-    const animationId = videoPath
-      .split("/")
-      .pop()
-      ?.split(".")[0]
-      ?.replace(/_/g, "-");
-    if (animationId) {
-      setCurrentAnimation(animationId);
-    }
-  };
-
-  // Sync animation selection with graph selection
-  useEffect(() => {
-    setCurrentAnimation(selectedVideo);
-  }, [selectedVideo, setCurrentAnimation]);
-
   // Reset animation state when animation changes
   useEffect(() => {
     if (isAnimating) {
-      stopAnimation();
+      resetAnimation();
     }
     setCurrentStepIndex(0);
     updateNodeStates(null);
@@ -166,7 +129,7 @@ function FlowComponent() {
 
     // Check if animation is complete
     if (elapsedTime >= activeAnimation[activeAnimation.length - 1]?.startTime) {
-      stopAnimation();
+      resetAnimation();
       return;
     }
 
@@ -177,38 +140,21 @@ function FlowComponent() {
   // Update animation controls
   const startAnimation = () => {
     if (!activeAnimation) return;
-    if (isPaused) {
-      const pausedTime = performance.now() - (animationStartTime || 0);
-      setAnimationStartTime(performance.now() - pausedTime);
-      setIsPaused(false);
-      if (videoRef.current) {
-        videoRef.current.play();
-      }
-    } else {
-      setAnimationStartTime(performance.now());
-      setIsAnimating(true);
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.play();
-      }
+    setAnimationStartTime(performance.now());
+    setIsAnimating(true);
+    setShowGraphsPanel(true);
+    setHasCompleted(false);
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
     }
     animationFrameRef.current = requestAnimationFrame(handleAnimationStep);
   };
 
-  const pauseAnimation = () => {
-    setIsPaused(true);
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  };
-
-  const stopAnimation = () => {
+  const resetAnimation = () => {
     setIsAnimating(false);
-    setIsPaused(false);
     setAnimationStartTime(null);
+    setHasCompleted(true);
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
@@ -230,10 +176,10 @@ function FlowComponent() {
 
   // Replace the previous animation effect
   useEffect(() => {
-    if (isAnimating && !isPaused) {
+    if (isAnimating) {
       animationFrameRef.current = requestAnimationFrame(handleAnimationStep);
     }
-  }, [isAnimating, isPaused]);
+  }, [isAnimating]);
 
   // Add video end handler
   useEffect(() => {
@@ -242,7 +188,7 @@ function FlowComponent() {
 
     const handleVideoEnd = () => {
       if (isAnimating) {
-        stopAnimation();
+        resetAnimation();
       }
     };
 
@@ -313,71 +259,28 @@ function FlowComponent() {
     );
   };
 
-  // Set initial video when component mounts
-  useEffect(() => {
-    // Set initial video to 3-3-3
-    setSelectedVideo("/videos/3-3-3.mp4");
-  }, []); // Empty dependency array means this runs once on mount
+  const [hasCompleted, setHasCompleted] = useState(false);
 
   return (
     <AnimatePresence mode="wait">
       <motion.div style={{ height: "100%", position: "relative" }}>
         {/* UI element toggle controls */}
         <div className="absolute right-4 top-4 z-10 flex flex-col gap-2">
-          {/* First row of buttons */}
-          <div className="flex gap-2">
-            <button
-              className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
-              onClick={() => setShowSymbolKey(!showSymbolKey)}
-            >
-              {showSymbolKey ? "Hide Key" : "Show Key"}
-            </button>
-            <button
-              className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
-              onClick={() => setShowGraphsPanel(!showGraphsPanel)}
-            >
-              {showGraphsPanel ? "Hide Charts" : "Show Charts"}
-            </button>
-          </div>
-
-          {/* Animation selector */}
-          <VideoSelector
-            selectedVideo={selectedVideo}
-            onVideoChange={handleSelectionChange}
-            videos={videos}
-          />
-
-          {/* Show video button */}
-          <button
-            className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
-            onClick={() => setShowVideo(!showVideo)}
-          >
-            {showVideo ? "Hide Video" : "Show Video"}
-          </button>
-
           {/* Animation control buttons */}
           <div className="flex gap-2">
             <button
               onClick={startAnimation}
-              disabled={isAnimating && !isPaused}
+              disabled={isAnimating}
               className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600 disabled:opacity-50"
             >
-              {isPaused ? "Resume" : "Start Animation"}
+              Start Animation
             </button>
-            {isAnimating && !isPaused && (
-              <button
-                onClick={pauseAnimation}
-                className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
-              >
-                Pause
-              </button>
-            )}
             <button
-              onClick={stopAnimation}
-              disabled={!isAnimating && !isPaused}
+              onClick={resetAnimation}
+              disabled={!isAnimating}
               className="rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600 disabled:opacity-50"
             >
-              Stop Animation
+              Reset Animation
             </button>
           </div>
 
@@ -385,13 +288,36 @@ function FlowComponent() {
           <SpeedSelector
             speed={playbackSpeed}
             onSpeedChange={handleSpeedChange}
+            disabled={isAnimating}
           />
+        </div>
+
+        {/* Replace the bottom right buttons with this new structure */}
+        <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-2">
+          <button
+            className="w-32 rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
+            onClick={() => setShowGraphsPanel(!showGraphsPanel)}
+          >
+            {showGraphsPanel ? "Hide Charts" : "Show Charts"}
+          </button>
+          <button
+            className="w-32 rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
+            onClick={() => setShowVideo(!showVideo)}
+          >
+            {showVideo ? "Hide Video" : "Show Video"}
+          </button>
+          <button
+            className="w-32 rounded-md bg-gray-500 px-4 py-2 text-white shadow-md hover:bg-gray-600"
+            onClick={() => setShowSymbolKey(!showSymbolKey)}
+          >
+            {showSymbolKey ? "Hide Key" : "Show Key"}
+          </button>
         </div>
 
         {/* Video component */}
         {showVideo && (
           <ResizableVideo
-            selectedVideo={selectedVideo}
+            selectedVideo={VIDEO_PATH}
             videoRef={videoRef}
             onError={handleVideoError}
             isAnimating={isAnimating}
@@ -403,7 +329,7 @@ function FlowComponent() {
           <GraphsPanel
             animationState={animationState}
             isAnimating={isAnimating}
-            graphId={getGraphIdFromPath(selectedVideo)}
+            hasCompleted={hasCompleted}
             videoRef={videoRef}
           />
         )}

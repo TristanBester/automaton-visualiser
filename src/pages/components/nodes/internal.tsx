@@ -1,8 +1,12 @@
 import { memo } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { NodeData } from "~/pages/types";
+import type { NodeData } from "~/pages/types";
+import { LAYOUT } from "~/config";
 
 export const InternalNode = memo(({ data }: NodeProps<NodeData>) => {
+  const radius = LAYOUT.NODE.DIAMETER / 2;
+  const backgroundColor = data.isActive ? data.style?.backgroundColor : "#fff";
+
   return (
     <div
       style={{
@@ -15,20 +19,22 @@ export const InternalNode = memo(({ data }: NodeProps<NodeData>) => {
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         transition: "all 0.2s ease-in-out",
         borderRadius: "50%",
-        width: "120px",
-        height: "120px",
+        width: `${LAYOUT.NODE.DIAMETER}px`,
+        height: `${LAYOUT.NODE.DIAMETER}px`,
         border: "2px solid rgba(0, 0, 0, 0.1)",
-        backgroundColor: data?.isActive ? data?.style?.backgroundColor : "#fff",
+        zIndex: 1,
+        position: "relative",
+        backgroundColor,
         cursor: "pointer",
         padding: "10px",
         textAlign: "center",
         lineHeight: "1.2",
-        ...data?.style,
+        ...(data.style || {}),
       }}
     >
-      <Handle type="target" position={Position.Left} />
-      {data?.label}
-      <Handle type="source" position={Position.Right} />
+      <Handle type="target" position={Position.Left} style={{ left: -4 }} />
+      {data.label}
+      <Handle type="source" position={Position.Right} style={{ right: -4 }} />
     </div>
   );
 });
