@@ -2,12 +2,19 @@ import React from "react";
 import { useAnimationContext } from "~/contexts/AnimationContext";
 
 const animations = [
-  { id: "1-1-1", label: "Animation 1-1-1" },
+  // { id: "1-1-1", label: "Animation 1-1-1" },
   { id: "3-3-3", label: "Animation 3-3-3" },
 ];
 
 export const AnimationSelector: React.FC = () => {
   const { currentAnimation, setCurrentAnimation } = useAnimationContext();
+
+  // Set default animation to "3-3-3" if no animation is selected
+  React.useEffect(() => {
+    if (!currentAnimation) {
+      setCurrentAnimation("3-3-3");
+    }
+  }, [currentAnimation, setCurrentAnimation]);
 
   return (
     <div className="absolute right-4 top-4 z-50">

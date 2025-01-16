@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { type AnimationState } from "~/data/3-3-3/animation/animation";
-import { ANIMATION_CONFIG } from "~/config";
+import React, { useState, useMemo, useEffect } from "react";
+import { type AnimationState } from "~/pages/types";
 import {
   LineChart,
   Line,
@@ -10,19 +9,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { GraphId } from "~/pages/types";
-
-// Define the data point type
-interface DataPoint {
-  time: number;
-  value: number;
-}
+import { loadCSVData, type DataPoint } from "~/utils/csv-loader";
 
 type GraphProps = {
   title: string;
   color: string;
   progress: number;
   isAnimating: boolean;
-  data: DataPoint[]; // Array of {time, value} points
+  data: DataPoint[];
+  videoDuration: number;
 };
 
 const Graph = ({
@@ -31,23 +26,25 @@ const Graph = ({
   progress,
   isAnimating,
   data,
-  graphId,
-}: GraphProps & { graphId: GraphId }) => {
-  // Calculate how much of the data to show based on progress
-  const maxTime = graphId === "1-1-1" ? 30 : 45; // Adjust time based on graph
-  const currentTime = (progress / 100) * maxTime;
+  videoDuration,
+}: GraphProps) => {
+  const currentTime = (progress / 100) * videoDuration;
 
-  // Filter and transform the data for display
   const displayData = useMemo(() => {
+    if (!data.length) return [];
+
+    const maxDataTime = data[data.length - 1].time;
+    const timeScale = videoDuration / maxDataTime;
+
     return data
-      .filter((point) => point.time <= currentTime)
+      .filter((point) => point.time * timeScale <= currentTime)
       .map((point) => ({
-        time: point.time,
+        time: point.time * timeScale,
         value: point.value,
-        // Add null values for future points to show the full time range
-        currentValue: point.time <= currentTime ? point.value : null,
+        currentValue:
+          point.time * timeScale <= currentTime ? point.value : null,
       }));
-  }, [data, currentTime]);
+  }, [data, currentTime, videoDuration]);
 
   return (
     <div className="w-full rounded-lg bg-white p-4 shadow-md">
@@ -61,16 +58,17 @@ const Graph = ({
             <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
             <XAxis
               dataKey="time"
-              domain={[0, maxTime]}
-              ticks={[0, maxTime / 3, (2 * maxTime) / 3, maxTime]}
-              tickFormatter={(value) => `${value}s`}
+              domain={[0, videoDuration]}
+              ticks={[
+                0,
+                videoDuration / 3,
+                (2 * videoDuration) / 3,
+                videoDuration,
+              ]}
+              tickFormatter={(value) => `${value.toFixed(1)}s`}
               fontSize={11}
             />
-            <YAxis
-              domain={["dataMin - 5", "dataMax + 5"]} // Add some padding
-              fontSize={11}
-            />
-            {/* Show full data as background line */}
+            <YAxis domain={["auto", "auto"]} fontSize={11} />
             <Line
               type="monotone"
               dataKey="value"
@@ -79,7 +77,6 @@ const Graph = ({
               strokeOpacity={0.3}
               dot={false}
             />
-            {/* Show current progress as main line */}
             <Line
               type="monotone"
               dataKey="currentValue"
@@ -95,63 +92,72 @@ const Graph = ({
   );
 };
 
-// Example data generator (replace with your actual data)
-const generateSampleData = (
-  type: "sine" | "square" | "sawtooth",
-  graphId: GraphId,
-): DataPoint[] => {
-  const points: DataPoint[] = [];
-  const maxTime = graphId === "1-1-1" ? 30 : 45; // Adjust time based on graph
-
-  for (let t = 0; t <= maxTime; t += 0.1) {
-    let value = 0;
-    switch (type) {
-      case "sine":
-        value = Math.sin(t * 0.5) * 50 + 50;
-        break;
-      case "square":
-        value = Math.floor(t / 5) % 2 === 0 ? 80 : 20;
-        break;
-      case "sawtooth":
-        value = (t % 5) * 20;
-        break;
-    }
-    points.push({ time: t, value });
-  }
-  return points;
-};
-
 interface GraphsPanelProps {
   animationState: AnimationState;
   isAnimating: boolean;
   graphId: GraphId;
+  videoRef: React.RefObject<HTMLVideoElement>;
 }
 
 export function GraphsPanel({
   animationState,
   isAnimating,
   graphId,
+  videoRef,
 }: GraphsPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [returnsData, setReturnsData] = useState<DataPoint[]>([]);
+  const [valuesData, setValuesData] = useState<DataPoint[]>([]);
+  const [rewardsData, setRewardsData] = useState<DataPoint[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
 
-  // Calculate progress percentage
-  const progress =
-    (animationState.timeElapsed / (ANIMATION_CONFIG.DURATION.TOTAL / 1000)) *
-    100;
+  // Load CSV data when graphId changes
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [returns, values, rewards] = await Promise.all([
+          loadCSVData(`/returns/${graphId}.csv`),
+          loadCSVData(`/values/${graphId}.csv`),
+          loadCSVData(`/rewards/${graphId}.csv`),
+        ]);
 
-  // Generate sample data based on graphId
-  const sineData = useMemo(
-    () => generateSampleData("sine", graphId),
-    [graphId],
-  );
-  const squareData = useMemo(
-    () => generateSampleData("square", graphId),
-    [graphId],
-  );
-  const sawtoothData = useMemo(
-    () => generateSampleData("sawtooth", graphId),
-    [graphId],
-  );
+        setReturnsData(returns);
+        setValuesData(values);
+        setRewardsData(rewards);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading CSV data:", err);
+        setError("Failed to load graph data");
+      }
+    };
+
+    void loadData();
+  }, [graphId]);
+
+  // Update progress when video time changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const updateProgress = () => {
+      const progress = (video.currentTime / video.duration) * 100;
+      setProgress(progress);
+    };
+
+    video.addEventListener("timeupdate", updateProgress);
+    return () => video.removeEventListener("timeupdate", updateProgress);
+  }, [videoRef]);
+
+  const videoDuration = videoRef.current?.duration || 30;
+
+  if (error) {
+    return (
+      <div className="absolute right-4 top-24 z-[1000] rounded-lg bg-red-50 p-4 text-red-600">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="absolute right-4 top-24 z-[1000] flex flex-col gap-4">
@@ -166,31 +172,29 @@ export function GraphsPanel({
       {isExpanded && (
         <div className="flex w-80 flex-col gap-4">
           <Graph
-            title="Sine Wave"
+            title="Rewards"
+            color="#90CAF9"
+            progress={progress}
+            isAnimating={isAnimating}
+            data={rewardsData}
+            videoDuration={videoDuration}
+          />
+          <Graph
+            title="Values"
+            color="#90EE90"
+            progress={progress}
+            isAnimating={isAnimating}
+            data={valuesData}
+            videoDuration={videoDuration}
+          />
+          <Graph
+            title="Returns"
             color="#ff9999"
             progress={progress}
             isAnimating={isAnimating}
-            data={sineData}
-            graphId={graphId}
+            data={returnsData}
+            videoDuration={videoDuration}
           />
-          <div className="flex flex-col gap-4">
-            <Graph
-              title="Square Wave"
-              color="#90EE90"
-              progress={progress}
-              isAnimating={isAnimating}
-              data={squareData}
-              graphId={graphId}
-            />
-            <Graph
-              title="Sawtooth Wave"
-              color="#90EE90"
-              progress={progress}
-              isAnimating={isAnimating}
-              data={sawtoothData}
-              graphId={graphId}
-            />
-          </div>
         </div>
       )}
     </div>

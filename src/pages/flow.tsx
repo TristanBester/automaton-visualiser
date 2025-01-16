@@ -36,8 +36,7 @@ import { SpeedSelector } from "~/components/SpeedSelector";
 
 // Add this helper function near the top of the file
 const getGraphIdFromPath = (path: string): GraphId => {
-  const id =
-    path.split("/").pop()?.split(".")[0]?.replace(/_/g, "-") ?? "1-1-1";
+  const id = path.split("/").pop()?.split(".")[0] ?? "3-3-3";
   return id as GraphId;
 };
 
@@ -48,8 +47,8 @@ function FlowComponent() {
   const [selectedVideo, setSelectedVideo] = useState("/videos/1_1_1.mp4");
   const videos = useMemo(
     () => [
-      { name: "1-1-1", path: "/videos/1_1_1.mp4" },
-      { name: "3-3-3", path: "/videos/3_3_3.mp4" },
+      { name: "1-1-1", path: "/videos/1-1-1.mp4" },
+      { name: "3-3-3", path: "/videos/3-3-3.mp4" },
     ],
     [],
   );
@@ -314,6 +313,12 @@ function FlowComponent() {
     );
   };
 
+  // Set initial video when component mounts
+  useEffect(() => {
+    // Set initial video to 3-3-3
+    setSelectedVideo("/videos/3-3-3.mp4");
+  }, []); // Empty dependency array means this runs once on mount
+
   return (
     <AnimatePresence mode="wait">
       <motion.div style={{ height: "100%", position: "relative" }}>
@@ -399,6 +404,7 @@ function FlowComponent() {
             animationState={animationState}
             isAnimating={isAnimating}
             graphId={getGraphIdFromPath(selectedVideo)}
+            videoRef={videoRef}
           />
         )}
 

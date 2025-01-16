@@ -10,8 +10,8 @@ type AnimationContextType = {
 };
 
 const defaultContext: AnimationContextType = {
-  activeAnimation: ANIMATION_1_1_1,
-  currentAnimation: "1-1-1",
+  activeAnimation: ANIMATION_3_3_3,
+  currentAnimation: "3-3-3",
   setCurrentAnimation: () => undefined,
 };
 
@@ -33,7 +33,7 @@ export function AnimationProvider({ children }: { children: React.ReactNode }) {
         case "3-3-3":
           return ANIMATION_3_3_3;
         default:
-          return ANIMATION_1_1_1;
+          return ANIMATION_3_3_3;
       }
     })();
     setActiveAnimation(newAnimation);
