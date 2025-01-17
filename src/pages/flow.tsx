@@ -6,16 +6,15 @@ import {
   useReactFlow,
   ReactFlowProvider,
   type Edge,
-  type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LAYOUT, STYLES } from "~/config";
-import { SymbolKey } from "./components/symbol-key";
+import { SymbolKey } from "~/components/symbol-key";
 import { ResizableVideo } from "~/components/ResizableVideo";
-import { GraphsPanel } from "./components/graphs-panel";
+import { GraphsPanel } from "~/components/graphs-panel";
 import {
   decisionNode,
   detailedNodesRed,
@@ -25,10 +24,10 @@ import {
 } from "~/data/nodes";
 import { edgeTypes } from "~/data/edge-types";
 import { nodeTypes } from "~/data/node-types";
-import { ABSTRACT_NODES } from "~/data/animations";
+import { ABSTRACT_NODES } from "~/data/animations/index";
 import { AnimationProvider } from "~/contexts/AnimationContext";
 import { useAnimationContext } from "~/contexts/AnimationContext";
-import { type AnimationState } from "~/pages/types";
+import { type AnimationState, type CustomNode } from "~/types";
 import { SpeedSelector } from "~/components/SpeedSelector";
 
 function FlowComponent() {
@@ -50,7 +49,7 @@ function FlowComponent() {
   };
 
   // Initialize nodes and edges with a useEffect to handle position updates
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
   // Update the useEffect to include detailed nodes
@@ -128,7 +127,8 @@ function FlowComponent() {
     }
 
     // Check if animation is complete
-    if (elapsedTime >= activeAnimation[activeAnimation.length - 1]?.startTime) {
+    const lastStep = activeAnimation[activeAnimation.length - 1];
+    if (lastStep && elapsedTime >= lastStep.startTime) {
       resetAnimation();
       return;
     }

@@ -1,4 +1,4 @@
-import { Symbol } from "~/pages/types";
+import { Symbol } from "~/types";
 
 export const symbols: Symbol[] = [
   {

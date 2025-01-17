@@ -4,7 +4,7 @@ import {
   BLUE_SEQUENCE,
   GREEN_SEQUENCE,
   RED_SEQUENCE,
-} from ".";
+} from "./index";
 
 export const ANIMATION_1_1_1: AnimationStep[] = [
   // Decision node

@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ANIMATION_CONFIG } from "~/config";
-import { GraphId } from "~/pages/types";
+import { GraphId } from "~/types";
 
 type ProgressGraphProps = {
   progress: number; // 0 to 100

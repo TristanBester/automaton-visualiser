@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { type AnimationState } from "~/pages/types";
+import { type AnimationState } from "~/types";
 import {
   LineChart,
   Line,
@@ -34,7 +34,10 @@ const Graph = ({
   const displayData = useMemo(() => {
     if (!data.length) return [];
 
-    const maxDataTime = data[data.length - 1].time;
+    const lastDataPoint = data[data.length - 1];
+    if (!lastDataPoint) return [];
+
+    const maxDataTime = lastDataPoint.time;
     const timeScale = videoDuration / maxDataTime;
 
     return data

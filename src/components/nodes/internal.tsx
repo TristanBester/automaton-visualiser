@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { Handle, Position, type NodeProps } from "@xyflow/react";
-import type { NodeData } from "~/pages/types";
+import { Handle, Position } from "@xyflow/react";
+import { type CustomNodeProps } from "~/types";
 import { LAYOUT } from "~/config";
 
-export const InternalNode = memo(({ data }: NodeProps<NodeData>) => {
+export const InternalNode = memo(({ data }: CustomNodeProps) => {
   const radius = LAYOUT.NODE.DIAMETER / 2;
   const backgroundColor = data.isActive ? data.style?.backgroundColor : "#fff";
 

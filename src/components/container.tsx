@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { useReactFlow, useStore } from "@xyflow/react";
+import { useReactFlow, useStore, type Transform } from "@xyflow/react";
 import { STYLES } from "~/config";
 
 type ContainerProps = {
@@ -23,7 +23,7 @@ export function Container({
   color = STYLES.COLORS.RED,
   dashed = true,
 }: ContainerProps) {
-  const { transform } = useStore();
+  const transform = useStore((state) => state.transform) as Transform;
   const [transformX, transformY, zoom] = transform;
 
   // Determine background color based on container color

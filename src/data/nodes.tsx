@@ -1,21 +1,20 @@
-import { LAYOUT } from "~/config";
 import { STYLES } from "~/config";
-import { NodeData } from "~/pages/types";
+import { type CustomNode } from "~/types";
 import { MarkerType } from "@xyflow/react";
 
 const DELTA_X = 750;
 const DELTA_Y = -750;
 
-export const decisionNode = {
+export const decisionNode: CustomNode = {
   id: "decision-node",
   type: "decision",
   position: {
     x: 0,
-    y: 0,
+    y: -15,
   },
   data: {
     label: "Decision Node",
-  } as NodeData,
+  },
 };
 
 const DETAILED_NODE_DELTA_X = 400;
@@ -38,7 +37,7 @@ const commonNodeStyle = {
   lineHeight: "1.2",
 } as const;
 
-export const detailedNodesRed = [
+export const detailedNodesRed: CustomNode[] = [
   {
     id: "pack-red-blocks-move-above",
     type: "abstract",
@@ -56,7 +55,7 @@ export const detailedNodesRed = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-red-blocks-grasp",
@@ -75,7 +74,7 @@ export const detailedNodesRed = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-red-blocks-grasp-action",
@@ -94,7 +93,7 @@ export const detailedNodesRed = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-red-blocks-move-to-packing-position",
@@ -113,7 +112,7 @@ export const detailedNodesRed = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-red-blocks-release",
@@ -132,11 +131,11 @@ export const detailedNodesRed = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
 ];
 
-export const detailedNodesGreen = [
+export const detailedNodesGreen: CustomNode[] = [
   {
     id: "pack-green-blocks-move-above",
     type: "abstract",
@@ -154,7 +153,7 @@ export const detailedNodesGreen = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-green-blocks-grasp",
@@ -173,7 +172,7 @@ export const detailedNodesGreen = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-green-blocks-grasp-action",
@@ -192,7 +191,7 @@ export const detailedNodesGreen = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-green-blocks-move-to-packing-position",
@@ -211,7 +210,7 @@ export const detailedNodesGreen = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-green-blocks-release",
@@ -230,11 +229,11 @@ export const detailedNodesGreen = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
 ];
 
-export const detailedNodesBlue = [
+export const detailedNodesBlue: CustomNode[] = [
   {
     id: "pack-blue-blocks-move-above",
     type: "abstract",
@@ -252,7 +251,7 @@ export const detailedNodesBlue = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-blue-blocks-grasp",
@@ -271,7 +270,7 @@ export const detailedNodesBlue = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-blue-blocks-grasp-action",
@@ -290,7 +289,7 @@ export const detailedNodesBlue = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-blue-blocks-move-to-packing-position",
@@ -309,7 +308,7 @@ export const detailedNodesBlue = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
   {
     id: "pack-blue-blocks-release",
@@ -328,7 +327,7 @@ export const detailedNodesBlue = [
           boxShadow: "0 6px 8px rgba(0, 0, 0, 0.15)",
         },
       },
-    } as NodeData,
+    },
   },
 ];
 

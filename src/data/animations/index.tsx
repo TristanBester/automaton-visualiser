@@ -2,6 +2,12 @@ export const ABSTRACT_NODES = {
   DECISION: "decision-node",
 } as const;
 
+export type AnimationStep = {
+  nodeId: string;
+  edgeId?: string;
+  startTime: number;
+};
+
 export const RED_SEQUENCE = {
   MOVE_ABOVE: "pack-red-blocks-move-above",
   GRASP_POSITION: "pack-red-blocks-grasp",
@@ -36,9 +42,3 @@ export const ALL_NODES = {
   ABSTRACT: ABSTRACT_NODES,
   SEQUENCES,
 } as const;
-
-export type AnimationStep = {
-  nodeId: string;
-  edgeId?: string;
-  startTime: number;
-};

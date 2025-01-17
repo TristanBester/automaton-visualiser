@@ -1,18 +1,14 @@
-import { type NodeProps } from "@xyflow/react";
-import { AnimatedNode } from "../pages/components/nodes/animated";
 import {
-  CustomNode,
+  AnimatedNode,
+} from "~/components/nodes/animated";
+import {
   InternalNode,
-  TerminalNode,
   DecisionNode,
-} from "../pages/components/nodes/basic";
-import { NodeData } from "~/pages/types";
+} from "~/components/nodes/basic";
+import { NodeData } from "~/types";
 
 export const nodeTypes = {
-  internal: InternalNode,
-  terminal: TerminalNode,
-  animated: AnimatedNode,
-  custom: CustomNode,
-  decision: DecisionNode,
   abstract: InternalNode,
+  decision: DecisionNode,
+  animated: AnimatedNode,
 };

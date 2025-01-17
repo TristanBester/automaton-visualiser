@@ -1,11 +1,11 @@
-import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { motion } from "framer-motion";
+import { Handle, Position } from "@xyflow/react";
+import { motion, type Variants } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import Latex from "react-latex-next";
-import { type NodeData } from "~/pages/types";
 import { useAnimationContext } from "~/contexts/AnimationContext";
+import { type CustomNodeProps } from "~/types";
 
-const variants = {
+const variants: Variants = {
   open: { opacity: 1, x: 0, y: 0 },
   closed: {
     opacity: [0.9, 0.1, 0.5, 0.2],
@@ -14,7 +14,7 @@ const variants = {
   },
 };
 
-export function AnimatedNode({ data, id }: NodeProps<NodeData>) {
+export function AnimatedNode({ data, id }: CustomNodeProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { currentAnimation } = useAnimationContext();
   const isActive = data.isActive;

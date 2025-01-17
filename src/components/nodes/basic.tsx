@@ -1,21 +1,25 @@
-import { useCallback, useState } from "react";
-import { Handle, NodeProps, Position } from "@xyflow/react";
+import { useState } from "react";
+import { Handle, Position } from "@xyflow/react";
+import { type CustomNodeProps } from "~/types";
+import { LAYOUT } from "~/config";
+import { STYLES } from "~/config/styles";
+import { motion, type Variants } from "framer-motion";
 import "katex/dist/katex.min.css";
 import Latex from "react-latex-next";
 import { cn } from "~/utils";
-import { motion } from "framer-motion";
-import { NodeData } from "~/pages/types";
-import { LAYOUT } from "~/config";
-import { STYLES } from "~/config/styles";
 
-export function CustomNode({ data }: NodeProps<NodeData>) {
+const variants: Variants = {
+  open: { opacity: 1, x: 0 },
+  closed: { opacity: 0, x: -100 },
+};
+
+export function CustomNode({ data }: CustomNodeProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <motion.div
-      animate={data.isOpen ? "start" : "end"}
-      transition={{ duration: 3 }}
-      variants={data.variants}
+      variants={variants}
+      animate={isOpen ? "open" : "closed"}
     >
       Hello
       <button onClick={() => setIsOpen((isOpen) => !isOpen)}> click</button>
@@ -23,7 +27,7 @@ export function CustomNode({ data }: NodeProps<NodeData>) {
   );
 }
 
-export function InternalNode({ data }: NodeProps<NodeData>) {
+export function InternalNode({ data }: CustomNodeProps) {
   return (
     <motion.div
       initial={{ scale: 0 }}
@@ -59,7 +63,7 @@ export function InternalNode({ data }: NodeProps<NodeData>) {
   );
 }
 
-export function DecisionNode({ data }: NodeProps<NodeData>) {
+export function DecisionNode({ data }: CustomNodeProps) {
   return (
     <motion.div
       initial={{ scale: 0 }}
